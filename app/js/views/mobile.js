@@ -816,7 +816,7 @@
               <span class="phone-meta-hw">iOS · Dynamic Island</span>
             </div>
 
-            <div class="phone-hardware-shell">
+            <div class="phone-hardware-shell" data-tour-target="split-phone">
               <div class="phone-frame">
                 <div class="phone-hardware-bar">
                   <span class="phone-hw-time">14:04</span>
@@ -843,7 +843,7 @@
           </div>
 
           <aside class="mobile-controls-rail" aria-label="Kontrol Skenario & Simulasi HP">
-            <div class="scenario-dock">
+            <div class="scenario-dock" data-tour-target="split-scenarios">
               <div class="scenario-dock-head">
                 <strong>Coba Skenario (10 Alur PRD v0.7)</strong>
                 <div class="scenario-nav-btns">

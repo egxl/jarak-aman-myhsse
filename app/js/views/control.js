@@ -251,7 +251,7 @@
             </div>
           </div>
 
-          <div class="terminal-map-box">
+          <div class="terminal-map-box" data-tour-target="split-map">
             <div class="terminal-map-stage">
               <svg viewBox="0 0 1200 620" style="width:100%;height:100%;display:block">
                 <defs>
@@ -409,7 +409,7 @@
         </div>
 
         <div class="scroll-col">
-          <div class="card" style="display:flex;flex-direction:column;gap:8px">
+          <div class="card" data-tour-target="split-alarms" style="display:flex;flex-direction:column;gap:8px">
             <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:6px;border-bottom:1px solid var(--border-subtle)">
               <strong style="font-size:14px">Antrean Alarm</strong>
               <span class="badge badge-warn">${alarms.filter((a) => a.showAction).length} terbuka</span>
@@ -491,7 +491,7 @@
             </div>
           </div>
 
-          <div class="card" style="display:flex;flex-direction:column;gap:8px">
+          <div class="card" data-tour-target="split-hotspots" style="display:flex;flex-direction:column;gap:8px">
             <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:6px;border-bottom:1px solid var(--border-subtle)">
               <strong style="font-size:14px">Peta Titik Rawan Mingguan (FR-7.7)</strong>
               <span class="badge badge-warn">Dari Laporan F12</span>
@@ -629,7 +629,7 @@
           </div>
         </div>
 
-        <div class="card scroll-col">
+        <div class="card scroll-col" data-tour-target="split-induction">
           <strong style="font-size:14px">Usulan dari Data Kemarin &amp; Laporan Masuk (F12)</strong>
           <div style="display:flex;flex-direction:column;gap:10px">
             ${ind.candidates.map((c) => {
@@ -700,13 +700,14 @@
 
     container.innerHTML = `
       <div class="ctrl-shell">
-        <div class="ctrl-top-strip">
+        <div class="ctrl-top-strip" data-tour-target="split-header">
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
             <strong style="font-size:16px">${state.cmdPost === 'cadangan' ? 'Pos Komando Cadangan (Tablet Gedung B)' : 'Ruang Kendali Utama'}</strong>
             <span class="mono" style="font-size:12.5px;color:var(--fg-muted)">${clock} · Data contoh</span>
             <span class="badge ${evac ? 'badge-crit' : (recovery ? 'badge-gold' : 'badge-safe')}">${evac ? (state.evacDrill ? 'LATIHAN · EVAKUASI' : 'EVAKUASI AKTIF') : (recovery ? 'PEMULIHAN' : 'Normal')}</span>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button data-ctrl-action="start-split-tour" type="button" class="btn-ghost kiosk-tour-trigger split-tour-trigger">? Panduan Split</button>
             ${state.phase === 'normal' ? `<button data-ctrl-action="open-confirm" class="btn-danger">Perintahkan evakuasi</button>` : ''}
             ${evac ? `
               <button data-ctrl-action="toggle-route" class="btn-ghost">${state.routeClosed ? 'Buka Jalan Dermaga B' : 'Tutup Jalan Dermaga B'}</button>
@@ -804,7 +805,8 @@
 
         const act = btn.dataset.ctrlAction;
         if (!act) return;
-        if (act === 'open-confirm') store.dispatch({ type: 'OPEN_CONFIRM_MODAL', open: true });
+        if (act === 'start-split-tour' && NS.SplitTour) NS.SplitTour.start();
+        else if (act === 'open-confirm') store.dispatch({ type: 'OPEN_CONFIRM_MODAL', open: true });
         else if (act === 'toggle-route') store.dispatch({ type: 'TOGGLE_ROUTE_CLOSED' });
         else if (act === 'toggle-cmd') store.dispatch({ type: 'TOGGLE_CMD_POST' });
         else if (act === 'cancel-evac') store.dispatch({ type: 'CANCEL_EVAC' });

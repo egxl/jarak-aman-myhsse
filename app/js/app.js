@@ -96,10 +96,16 @@
     if (mMarshal && !mMarshal.hidden && typeof views.renderMarshal === 'function') {
       views.renderMarshal(mMarshal, state, store);
     }
+    if (NS.SplitTour && NS.SplitTour.isOpen() && typeof root.requestAnimationFrame === 'function') {
+      root.requestAnimationFrame(() => NS.SplitTour.reposition());
+    }
   }
 
   function setView(viewId, store) {
     activeView = ['split', 'mobile', 'control', 'kiosk', 'marshal'].includes(viewId) ? viewId : 'split';
+    if (activeView !== 'split' && NS.SplitTour) {
+      NS.SplitTour.close(true);
+    }
     const rootEl = document.getElementById('workspace-root');
     if (rootEl) {
       rootEl.className = `workspace-root mode-${activeView}`;
@@ -165,6 +171,7 @@
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
         if (typeof NS.Views.closeKioskTour === 'function') NS.Views.closeKioskTour(false);
+        if (NS.SplitTour) NS.SplitTour.close(false);
         store.reset();
         showToast('Demo direset ke kondisi awal (Data contoh Tanjung Priok)');
       });
@@ -173,7 +180,9 @@
     store.subscribe(() => renderAll(store));
     setView(parseQueryView(), store);
 
-    setInterval(() => store.tick(), 1000);
+    setInterval(() => {
+      if (!NS.SplitTour || !NS.SplitTour.isOpen()) store.tick();
+    }, 1000);
   }
 
   NS.App = { initApp, setView, applyTheme, showToast };
