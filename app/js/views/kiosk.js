@@ -5,6 +5,11 @@
   NS.Views = NS.Views || {};
 
   let validationMsg = '';
+  let tourIndex = -1;
+  let tourBackup = null;
+  let tourListenersBound = false;
+  let storeRef = null;
+  let containerRef = null;
 
   function esc(str) {
     return String(str == null ? '' : str)
@@ -77,7 +82,11 @@
       passPpe: 'Status APD',
       ppePersonal: 'APD Pribadi Lengkap',
       ppeLoaned: 'APD Pinjaman Pos Gate',
-      newBtn: 'Daftarkan Pekerja Berikutnya'
+      newBtn: 'Daftarkan Pekerja Berikutnya',
+      tourBtn: 'Panduan Kiosk',
+      tourClose: 'Tutup',
+      tourNext: 'Lanjut →',
+      tourDone: 'Selesai ✓'
     },
     en: {
       eyebrow: 'GATE 3 KIOSK · MYHSSE JARAK AMAN MODULE',
@@ -135,18 +144,171 @@
       passPpe: 'PPE Status',
       ppePersonal: 'Own PPE Complete',
       ppeLoaned: 'Gate Loaner PPE Issued',
-      newBtn: 'Register Next Visitor / Worker'
+      newBtn: 'Register Next Visitor / Worker',
+      tourBtn: 'Kiosk Tour',
+      tourClose: 'Close',
+      tourNext: 'Next →',
+      tourDone: 'Done ✓'
     }
   };
 
+  const TOUR_STOPS = [
+    {
+      target: 'kiosk-header',
+      patch: { step: 1 },
+      id: {
+        title: '1. Kenapa Ada Kiosk Pos Gate?',
+        body: 'TKBM, sopir truk luar, tamu, dan ABK kapal sering masuk tanpa HP atau aplikasi MyHSSE. Layar sentuh di Gate 3 ini memastikan mereka tetap terdata dan paham aturan bahaya.',
+        why: 'Dampak HSSE: Tidak ada pekerja tanpa HP yang luput dari hitungan evakuasi & SAR. Tombol ID / EN di kanan atas memudahkan kru kapal asing.'
+      },
+      en: {
+        title: '1. Why Gate Kiosk Exists',
+        body: 'Stevedores (TKBM), external truck drivers, visitors, and vessel crew often enter without smartphones or the MyHSSE app. This Gate 3 touchscreen logs them and delivers safety rules.',
+        why: 'HSSE Impact: Zero blind spots during evacuation headcounts. The ID / EN toggle supports foreign vessel crew (ABK).'
+      }
+    },
+    {
+      target: 'kiosk-identity',
+      patch: { step: 1, role: 'Sopir truk', name: 'Slamet', cardId: 'STID-9981', passengers: 1, phone: '0812-3456-7890' },
+      id: {
+        title: '2. Identitas Pengunjung & Jumlah Kenek',
+        body: 'Pengunjung memilih kelompok (TKBM / Sopir / Tamu), mengisi nama + STID/Kartu (contoh terisi: Slamet), serta jumlah pendamping/kenek di truk.',
+        why: 'Dampak HSSE: 1 truk dengan 1 kenek otomatis dicatat sebagai 2 jiwa di Daftar SAR. No. HP opsional dipakai untuk SMS darurat cadangan.'
+      },
+      en: {
+        title: '2. Visitor Identity & Extra Helpers',
+        body: 'Visitors select their group (TKBM / Driver / Visitor), enter Name + Card/STID (sample filled: Slamet), and set extra companions riding in the vehicle.',
+        why: 'HSSE Impact: 1 truck with 1 helper logs 2 separate people in the SAR roll-call. Optional mobile number enables emergency SMS fallback.'
+      }
+    },
+    {
+      target: 'kiosk-brief',
+      patch: { step: 2, role: 'Sopir truk', name: 'Slamet', cardId: 'STID-9981', passengers: 1, phone: '0812-3456-7890' },
+      id: {
+        title: '3. Tiga Aturan Keselamatan Wajib (~30 Detik)',
+        body: 'Sebelum masuk area terminal, pengunjung membaca 3 aturan bahaya lapangan hari ini: jalur alat berat, APD saat turun kabin, dan evakuasi mandiri.',
+        why: 'Dampak HSSE: Pengunjung menekan "Saya Paham" lalu menyerahkan layar ke petugas gate—cepat, ringkas, dan bebas jargon teknis.'
+      },
+      en: {
+        title: '3. Three Mandatory Safety Rules (~30 sec)',
+        body: 'Before entering the terminal, visitors review today\'s 3 core port rules: heavy-equipment lanes, cabin-exit PPE, and self-evacuation.',
+        why: 'HSSE Impact: Visitors tap "I Understand" and hand the screen to the Gate Officer—fast, visual, and accessible in ID or EN.'
+      }
+    },
+    {
+      target: 'kiosk-handoff',
+      patch: { step: 3, role: 'Sopir truk', name: 'Slamet', cardId: 'STID-9981', passengers: 1, apdHelm: false, apdVest: true, apdShoes: true, borrowedApd: false },
+      id: {
+        title: '4. Serah Terima ke Petugas Pos Gate 3',
+        body: 'Sekarang giliran Petugas Gate memeriksa fisik pengunjung (Slamet · STID-9981 · +1 pendamping) sebelum membuka palang masuk.',
+        why: 'Dampak HSSE: Memisahkan input mandiri pengunjung dari otorisasi petugas sehingga kepatuhan APD tidak bisa diklaim sepihak.'
+      },
+      en: {
+        title: '4. Handover to Gate 3 Officer',
+        body: 'Now the Gate Officer verifies the visitor summary (Slamet · STID-9981 · +1 companion) and inspects physical gear before lifting the gate barrier.',
+        why: 'HSSE Impact: Separates visitor self-entry from officer sign-off so PPE compliance cannot be self-certified.'
+      }
+    },
+    {
+      target: 'kiosk-ppe',
+      patch: { step: 3, role: 'Sopir truk', name: 'Slamet', cardId: 'STID-9981', passengers: 1, apdHelm: false, apdVest: true, apdShoes: true, borrowedApd: true },
+      id: {
+        title: '5. Cek Fisik APD & Pinjaman Pos Gate',
+        body: 'Jika Helm atau Rompi tidak dibawa, tombol selesai terkunci sampai petugas mengaktifkan "Pinjamkan APD Cadangan Pos Gate". Sepatu safety tetap mutlak wajib.',
+        why: 'Dampak HSSE: Menjamin semua orang di terminal memakai APD lengkap sekaligus mencatat aset APD pinjaman pos.'
+      },
+      en: {
+        title: '5. Physical PPE Check & Gate Loaner Gear',
+        body: 'If Helmet or Vest is missing, submission stays blocked until the officer toggles "Issue Loaner PPE at Gate Post". Safety shoes remain strictly mandatory.',
+        why: 'HSSE Impact: Enforces full PPE before entry while logging an audit trail for loaned Gate Post gear.'
+      }
+    },
+    {
+      target: 'kiosk-done',
+      patch: {
+        step: 4,
+        lastCheckin: { name: 'Slamet', role: 'Sopir truk', cardId: 'STID-9981', passengers: 1, borrowedApd: true, time: '14.00 WIB' }
+      },
+      id: {
+        title: '6. Pratinjau Hasil & Sinkron ke Ruang Kendali',
+        body: 'Pada pemakaian nyata, langkah ini langsung menambah Slamet + Penumpang 1 ke Ruang Kendali dan Tablet Titik Kumpul berlabel "Di pos gate (tanpa aplikasi)".',
+        why: 'Catatan demo: Tur ini memakai pratinjau aman agar tidak menambah data ganda. Tutup tur untuk mencoba check-in nyata.'
+      },
+      en: {
+        title: '6. Live Sync to Control Room & Muster Tablet',
+        body: 'In live operation, completing this logs Slamet + Companion 1 into Control Room and Muster Tablet as "Gate Kiosk (no app)".',
+        why: 'Demo note: This tour uses a safe preview so it will not duplicate workers. Close the tour to run a real check-in.'
+      }
+    }
+  ];
+
+  function positionTour(container) {
+    if (tourIndex < 0 || !container) return;
+    const stop = TOUR_STOPS[tourIndex];
+    const targetEl = container.querySelector('[data-tour-target="' + stop.target + '"]');
+    const spotlightEl = container.querySelector('.kiosk-tour-spotlight');
+    const cardEl = container.querySelector('.kiosk-tour-card');
+    if (!targetEl || !spotlightEl || !cardEl) return;
+
+    targetEl.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+    const r = targetEl.getBoundingClientRect();
+    const pad = 6;
+    spotlightEl.style.top = Math.max(4, r.top - pad) + 'px';
+    spotlightEl.style.left = Math.max(4, r.left - pad) + 'px';
+    spotlightEl.style.width = Math.min(root.innerWidth - 8, r.width + pad * 2) + 'px';
+    spotlightEl.style.height = Math.min(root.innerHeight - 8, r.height + pad * 2) + 'px';
+
+    const cw = cardEl.offsetWidth || 400;
+    const ch = cardEl.offsetHeight || 220;
+    const gap = 14;
+    let top;
+    if (r.bottom + pad + gap + ch <= root.innerHeight - 12) top = r.bottom + pad + gap;
+    else if (r.top - pad - gap - ch >= 12) top = r.top - pad - gap - ch;
+    else top = Math.max(12, root.innerHeight - ch - 16);
+    const left = Math.max(16, Math.min(root.innerWidth - cw - 16, r.left));
+    cardEl.style.top = top + 'px';
+    cardEl.style.left = left + 'px';
+  }
+
+  function applyTourStep(idx) {
+    if (!storeRef) return;
+    tourIndex = Math.max(0, Math.min(TOUR_STOPS.length - 1, idx));
+    storeRef.dispatch({ type: 'KIOSK_SET', patch: Object.assign({}, TOUR_STOPS[tourIndex].patch) });
+  }
+
+  function startTour() {
+    if (!storeRef) return;
+    const cur = storeRef.getState().kiosk;
+    tourBackup = Object.assign({}, cur, {
+      lastCheckin: cur.lastCheckin ? Object.assign({}, cur.lastCheckin) : null
+    });
+    validationMsg = '';
+    applyTourStep(0);
+  }
+
+  function closeTour(restore) {
+    if (tourIndex < 0) return;
+    const backup = tourBackup;
+    tourIndex = -1;
+    tourBackup = null;
+    if (restore !== false && backup && storeRef) {
+      backup.lang = storeRef.getState().kiosk.lang;
+      storeRef.dispatch({ type: 'KIOSK_SET', patch: backup });
+    } else if (containerRef && storeRef) {
+      renderKiosk(containerRef, storeRef.getState(), storeRef);
+    }
+  }
+
   function renderKiosk(container, state, store) {
+    storeRef = store;
+    containerRef = container;
     const k = state.kiosk;
     const lang = k.lang === 'en' ? 'en' : 'id';
     const t = COPY[lang];
 
     // Skip rebuilding while user is typing in a Kiosk input field
     const activeEl = document.activeElement;
-    if (activeEl && container.contains(activeEl) && activeEl.tagName === 'INPUT') {
+    if (tourIndex < 0 && activeEl && container.contains(activeEl) && activeEl.tagName === 'INPUT') {
       return;
     }
 
@@ -164,41 +326,43 @@
             </div>
           </div>
 
-          <div>
-            <label style="display:block;font-size:12px;font-weight:700;margin-bottom:7px">${t.roleLbl}</label>
-            <div class="kiosk-role-grid">
-              ${ROLES.map((r) => `
-                <button data-kiosk-role="${r.id}" class="kiosk-role-card ${k.role === r.id ? 'active' : ''}">
-                  <strong style="font-size:14.5px">${lang === 'en' ? r.enLabel : r.idLabel}</strong>
-                  <span style="font-size:12px;color:var(--fg-muted)">${lang === 'en' ? r.enSub : r.idSub}</span>
-                </button>
-              `).join('')}
+          <div data-tour-target="kiosk-identity" style="display:flex;flex-direction:column;gap:14px">
+            <div>
+              <label style="display:block;font-size:12px;font-weight:700;margin-bottom:7px">${t.roleLbl}</label>
+              <div class="kiosk-role-grid">
+                ${ROLES.map((r) => `
+                  <button data-kiosk-role="${r.id}" class="kiosk-role-card ${k.role === r.id ? 'active' : ''}">
+                    <strong style="font-size:14.5px">${lang === 'en' ? r.enLabel : r.idLabel}</strong>
+                    <span style="font-size:12px;color:var(--fg-muted)">${lang === 'en' ? r.enSub : r.idSub}</span>
+                  </button>
+                `).join('')}
+              </div>
             </div>
-          </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <div>
-              <label for="kiosk-name" style="display:block;font-size:12px;font-weight:700;margin-bottom:5px">${t.nameLbl}</label>
-              <input id="kiosk-name" type="text" value="${esc(k.name)}" placeholder="${t.namePh}" style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid ${validationMsg && !k.name.trim() ? 'var(--sig-crit)' : 'var(--border-strong)'};background:var(--bg-surface-2);color:var(--fg-primary);font-size:14px">
-            </div>
-            <div>
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-                <label for="kiosk-card" style="font-size:12px;font-weight:700">${t.cardLbl}</label>
-                <button data-kiosk-action="auto-id" type="button" style="border:none;background:transparent;color:var(--brand-blue);font-size:12px;font-weight:700;padding:0">${t.autoIdBtn}</button>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div>
+                <label for="kiosk-name" style="display:block;font-size:12px;font-weight:700;margin-bottom:5px">${t.nameLbl}</label>
+                <input id="kiosk-name" type="text" value="${esc(k.name)}" placeholder="${t.namePh}" style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid ${validationMsg && !k.name.trim() ? 'var(--sig-crit)' : 'var(--border-strong)'};background:var(--bg-surface-2);color:var(--fg-primary);font-size:14px">
               </div>
-              <input id="kiosk-card" type="text" value="${esc(k.cardId)}" placeholder="${t.cardPh}" style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid ${validationMsg && !k.cardId.trim() ? 'var(--sig-crit)' : 'var(--border-strong)'};background:var(--bg-surface-2);color:var(--fg-primary);font-size:14px">
-            </div>
-            <div>
-              <label style="display:block;font-size:12px;font-weight:700;margin-bottom:5px">${t.passLbl}</label>
-              <div class="kiosk-stepper-ctrl">
-                <button data-kiosk-action="pass-dec" class="kiosk-stepper-btn" type="button" ${k.passengers <= 0 ? 'disabled' : ''}>−</button>
-                <span class="mono" style="flex:1;text-align:center;font-size:15px;font-weight:700">${k.passengers} ${t.passUnit}</span>
-                <button data-kiosk-action="pass-inc" class="kiosk-stepper-btn" type="button" ${k.passengers >= 4 ? 'disabled' : ''}>+</button>
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+                  <label for="kiosk-card" style="font-size:12px;font-weight:700">${t.cardLbl}</label>
+                  <button data-kiosk-action="auto-id" type="button" style="border:none;background:transparent;color:var(--brand-blue);font-size:12px;font-weight:700;padding:0">${t.autoIdBtn}</button>
+                </div>
+                <input id="kiosk-card" type="text" value="${esc(k.cardId)}" placeholder="${t.cardPh}" style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid ${validationMsg && !k.cardId.trim() ? 'var(--sig-crit)' : 'var(--border-strong)'};background:var(--bg-surface-2);color:var(--fg-primary);font-size:14px">
               </div>
-            </div>
-            <div>
-              <label for="kiosk-phone" style="display:block;font-size:12px;font-weight:700;margin-bottom:5px">${t.phoneLbl}</label>
-              <input id="kiosk-phone" type="text" value="${esc(k.phone)}" placeholder="${t.phonePh}" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border-strong);background:var(--bg-surface-2);color:var(--fg-primary);font-size:14px">
+              <div>
+                <label style="display:block;font-size:12px;font-weight:700;margin-bottom:5px">${t.passLbl}</label>
+                <div class="kiosk-stepper-ctrl">
+                  <button data-kiosk-action="pass-dec" class="kiosk-stepper-btn" type="button" ${k.passengers <= 0 ? 'disabled' : ''}>−</button>
+                  <span class="mono" style="flex:1;text-align:center;font-size:15px;font-weight:700">${k.passengers} ${t.passUnit}</span>
+                  <button data-kiosk-action="pass-inc" class="kiosk-stepper-btn" type="button" ${k.passengers >= 4 ? 'disabled' : ''}>+</button>
+                </div>
+              </div>
+              <div>
+                <label for="kiosk-phone" style="display:block;font-size:12px;font-weight:700;margin-bottom:5px">${t.phoneLbl}</label>
+                <input id="kiosk-phone" type="text" value="${esc(k.phone)}" placeholder="${t.phonePh}" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border-strong);background:var(--bg-surface-2);color:var(--fg-primary);font-size:14px">
+              </div>
             </div>
           </div>
 
@@ -216,7 +380,7 @@
             <span class="kiosk-persona-tag kiosk-persona-visitor">${t.personaVisitor}</span>
             <strong style="font-size:15px">${t.briefTitle}</strong>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+          <div data-tour-target="kiosk-brief" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
             ${t.briefCards.map((c) => `
               <div style="padding:15px;border-radius:14px;background:var(--bg-surface-2);border:1px solid var(--border-subtle)">
                 <strong style="display:block;font-size:14px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border-subtle)">${esc(c[0])}</strong>
@@ -240,7 +404,7 @@
 
       bodyHtml = `
         <div style="display:flex;flex-direction:column;gap:14px">
-          <div class="kiosk-handoff-banner">
+          <div data-tour-target="kiosk-handoff" class="kiosk-handoff-banner">
             <div>
               <span class="kiosk-persona-tag kiosk-persona-officer">${t.personaOfficer}</span>
               <div style="font-size:15px;font-weight:800;margin-top:6px">${t.handoffTitle}</div>
@@ -252,28 +416,30 @@
             </div>
           </div>
 
-          <div class="kiosk-ppe-grid">
-            ${t.ppeItems.map((item) => {
-              const ok = !!k[item[0]];
-              return `
-                <button data-kiosk-apd="${item[0]}" style="text-align:left;padding:14px;border-radius:14px;border:2px solid ${ok ? 'var(--sig-safe)' : 'var(--sig-crit)'};background:${ok ? 'var(--sig-safe-bg)' : 'var(--sig-crit-bg)'};color:var(--fg-primary);display:flex;flex-direction:column;gap:4px">
-                  <div style="display:flex;justify-content:space-between;align-items:center">
-                    <strong style="font-size:14px">${item[1]}</strong>
-                    <span class="badge ${ok ? 'badge-safe' : 'badge-crit'}">${ok ? '✓ ' + t.ppeOk : '✕ ' + t.ppeMiss}</span>
-                  </div>
-                  <span style="font-size:12px;color:var(--fg-muted)">${item[2]}</span>
-                </button>
-              `;
-            }).join('')}
-          </div>
-
-          <button data-kiosk-action="toggle-borrow" style="text-align:left;padding:12px 14px;border-radius:12px;border:2px solid ${k.borrowedApd ? 'var(--brand-gold)' : (blockedByUpper ? 'var(--sig-warn)' : 'var(--border-strong)')};background:${k.borrowedApd ? 'var(--brand-gold-bg)' : (blockedByUpper ? 'var(--sig-warn-bg)' : 'transparent')};color:var(--fg-primary);display:flex;justify-content:space-between;align-items:center;gap:10px">
-            <div>
-              <strong style="display:block;font-size:13.5px">${k.borrowedApd ? '✓ ' : '+ '}${t.borrowLbl}</strong>
-              <span style="font-size:12px;color:var(--fg-secondary)">${t.borrowSub}</span>
+          <div data-tour-target="kiosk-ppe" style="display:flex;flex-direction:column;gap:14px">
+            <div class="kiosk-ppe-grid">
+              ${t.ppeItems.map((item) => {
+                const ok = !!k[item[0]];
+                return `
+                  <button data-kiosk-apd="${item[0]}" style="text-align:left;padding:14px;border-radius:14px;border:2px solid ${ok ? 'var(--sig-safe)' : 'var(--sig-crit)'};background:${ok ? 'var(--sig-safe-bg)' : 'var(--sig-crit-bg)'};color:var(--fg-primary);display:flex;flex-direction:column;gap:4px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                      <strong style="font-size:14px">${item[1]}</strong>
+                      <span class="badge ${ok ? 'badge-safe' : 'badge-crit'}">${ok ? '✓ ' + t.ppeOk : '✕ ' + t.ppeMiss}</span>
+                    </div>
+                    <span style="font-size:12px;color:var(--fg-muted)">${item[2]}</span>
+                  </button>
+                `;
+              }).join('')}
             </div>
-            <span class="badge ${k.borrowedApd ? 'badge-gold' : 'badge-muted'}">${k.borrowedApd ? 'ON' : 'OFF'}</span>
-          </button>
+
+            <button data-kiosk-action="toggle-borrow" style="text-align:left;padding:12px 14px;border-radius:12px;border:2px solid ${k.borrowedApd ? 'var(--brand-gold)' : (blockedByUpper ? 'var(--sig-warn)' : 'var(--border-strong)')};background:${k.borrowedApd ? 'var(--brand-gold-bg)' : (blockedByUpper ? 'var(--sig-warn-bg)' : 'transparent')};color:var(--fg-primary);display:flex;justify-content:space-between;align-items:center;gap:10px">
+              <div>
+                <strong style="display:block;font-size:13.5px">${k.borrowedApd ? '✓ ' : '+ '}${t.borrowLbl}</strong>
+                <span style="font-size:12px;color:var(--fg-secondary)">${t.borrowSub}</span>
+              </div>
+              <span class="badge ${k.borrowedApd ? 'badge-gold' : 'badge-muted'}">${k.borrowedApd ? 'ON' : 'OFF'}</span>
+            </button>
+          </div>
 
           ${missingShoes ? `<div style="padding:9px 12px;border-radius:10px;background:var(--sig-crit-bg);color:var(--sig-crit);font-size:12.5px;font-weight:700">${t.shoeBlockWarn}</div>` : ''}
           ${!missingShoes && blockedByUpper ? `<div style="padding:9px 12px;border-radius:10px;background:var(--sig-warn-bg);color:var(--sig-warn-fg);font-size:12.5px;font-weight:700">${t.ppeBlockWarn}</div>` : ''}
@@ -289,7 +455,7 @@
       const roleObj = ROLES.find((r) => r.id === lc.role);
       const roleDisp = roleObj ? (lang === 'en' ? roleObj.enLabel : roleObj.idLabel) : lc.role;
       bodyHtml = `
-        <div style="padding:18px;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center">
+        <div data-tour-target="kiosk-done" style="padding:18px;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center">
           <div style="width:66px;height:66px;border-radius:50%;background:var(--sig-safe-bg);color:var(--sig-safe);display:grid;place-items:center;font-size:32px;font-weight:800">✓</div>
           <h2 style="margin:0;font-size:23px">${t.doneTitle}</h2>
           <p style="margin:0;max-width:560px;font-size:14px;color:var(--fg-secondary);line-height:1.5">${t.doneSub}</p>
@@ -314,16 +480,41 @@
       `;
     }
 
+    const activeStop = tourIndex >= 0 ? TOUR_STOPS[tourIndex] : null;
+    const stopCopy = activeStop ? activeStop[lang] : null;
+    const tourHtml = activeStop ? `
+      <div class="kiosk-tour-backdrop" data-kiosk-action="close-tour" aria-hidden="true"></div>
+      <div class="kiosk-tour-spotlight" aria-hidden="true"></div>
+      <div class="kiosk-tour-card" role="dialog" aria-modal="true" aria-label="${esc(stopCopy.title)}">
+        <div class="kiosk-tour-meta">
+          <span class="badge badge-gold">${tourIndex + 1} / ${TOUR_STOPS.length}</span>
+          <button data-kiosk-action="close-tour" type="button" class="btn-ghost" style="padding:4px 10px;font-size:12px">${t.tourClose}</button>
+        </div>
+        <h3>${esc(stopCopy.title)}</h3>
+        <p>${esc(stopCopy.body)}</p>
+        <div class="kiosk-tour-why">${esc(stopCopy.why)}</div>
+        <div class="kiosk-tour-footer">
+          <button data-kiosk-action="tour-prev" type="button" class="btn-ghost" ${tourIndex === 0 ? 'disabled' : ''}>${t.backBtn}</button>
+          <button data-kiosk-action="${tourIndex === TOUR_STOPS.length - 1 ? 'close-tour' : 'tour-next'}" type="button" class="btn-primary">
+            ${tourIndex === TOUR_STOPS.length - 1 ? t.tourDone : t.tourNext}
+          </button>
+        </div>
+      </div>
+    ` : '';
+
     container.innerHTML = `
       <div class="kiosk-shell">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--border-subtle);padding-bottom:14px">
+        <div data-tour-target="kiosk-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--border-subtle);padding-bottom:14px">
           <div>
             <h1 style="margin:0 0 4px;font-size:22px">${t.title}</h1>
             <div style="font-size:13px;color:var(--fg-muted)">${t.sub}</div>
           </div>
-          <div class="os-switch" role="group" aria-label="Language">
-            <button data-kiosk-lang="id" class="${lang === 'id' ? 'active' : ''}">ID</button>
-            <button data-kiosk-lang="en" class="${lang === 'en' ? 'active' : ''}">EN</button>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <button data-kiosk-action="start-tour" type="button" class="btn-ghost kiosk-tour-trigger">? ${t.tourBtn}</button>
+            <div class="os-switch" role="group" aria-label="Language">
+              <button data-kiosk-lang="id" class="${lang === 'id' ? 'active' : ''}">ID</button>
+              <button data-kiosk-lang="en" class="${lang === 'en' ? 'active' : ''}">EN</button>
+            </div>
           </div>
         </div>
 
@@ -337,7 +528,24 @@
 
         ${bodyHtml}
       </div>
+      ${tourHtml}
     `;
+
+    if (tourIndex >= 0 && typeof root.requestAnimationFrame === 'function') {
+      root.requestAnimationFrame(() => positionTour(container));
+    }
+
+    if (!tourListenersBound) {
+      tourListenersBound = true;
+      root.addEventListener('resize', () => {
+        if (tourIndex >= 0 && containerRef && !containerRef.hidden) positionTour(containerRef);
+      });
+      document.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Escape' && tourIndex >= 0 && containerRef && !containerRef.hidden) {
+          closeTour(true);
+        }
+      });
+    }
 
     if (!container.dataset.wired) {
       container.dataset.wired = '1';
@@ -351,24 +559,25 @@
         }
       });
       container.addEventListener('click', (ev) => {
+        const actEl = ev.target.closest('[data-kiosk-action]');
         const btn = ev.target.closest('button');
-        if (!btn) return;
+        if (!btn && !actEl) return;
         const cur = store.getState().kiosk;
-        if (btn.dataset.kioskLang) {
+        if (btn && btn.dataset.kioskLang) {
           validationMsg = '';
           store.dispatch({ type: 'KIOSK_SET', patch: { lang: btn.dataset.kioskLang } });
           return;
         }
-        if (btn.dataset.kioskRole) {
+        if (btn && btn.dataset.kioskRole) {
           store.dispatch({ type: 'KIOSK_SET', patch: { role: btn.dataset.kioskRole } });
           return;
         }
-        if (btn.dataset.kioskApd) {
+        if (btn && btn.dataset.kioskApd) {
           const key = btn.dataset.kioskApd;
           store.dispatch({ type: 'KIOSK_SET', patch: { [key]: !cur[key] } });
           return;
         }
-        if (btn.dataset.kioskPreset) {
+        if (btn && btn.dataset.kioskPreset) {
           validationMsg = '';
           const p = btn.dataset.kioskPreset;
           if (p === 'tkbm') store.dispatch({ type: 'KIOSK_SET', patch: { role: 'TKBM', name: 'Suherman', cardId: 'TKBM-881', passengers: 0, lang: 'id' } });
@@ -377,10 +586,18 @@
           return;
         }
 
-        const act = btn.dataset.kioskAction;
+        const act = (btn && btn.dataset.kioskAction) || (actEl && actEl.dataset.kioskAction);
         if (!act) return;
         const activeCopy = COPY[cur.lang === 'en' ? 'en' : 'id'];
-        if (act === 'auto-id') {
+        if (act === 'start-tour') {
+          startTour();
+        } else if (act === 'close-tour') {
+          closeTour(true);
+        } else if (act === 'tour-prev') {
+          applyTourStep(tourIndex - 1);
+        } else if (act === 'tour-next') {
+          applyTourStep(tourIndex + 1);
+        } else if (act === 'auto-id') {
           const prefix = cur.role === 'Sopir truk' ? 'STID' : (cur.role === 'TKBM' ? 'TKBM' : 'PASS');
           const rnd = 100 + (store.getState().workers.length % 900);
           store.dispatch({ type: 'KIOSK_SET', patch: { cardId: `${prefix}-${rnd}` } });
@@ -412,4 +629,5 @@
   }
 
   NS.Views.renderKiosk = renderKiosk;
+  NS.Views.closeKioskTour = closeTour;
 })(window);

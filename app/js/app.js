@@ -164,6 +164,7 @@
     const resetBtn = document.getElementById('btn-demo-reset');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
+        if (typeof NS.Views.closeKioskTour === 'function') NS.Views.closeKioskTour(false);
         store.reset();
         showToast('Demo direset ke kondisi awal (Data contoh Tanjung Priok)');
       });
