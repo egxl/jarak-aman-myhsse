@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyHSSE · JARAK AMAN v0.7 — Demo Interaktif 4 Peran</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/tokens.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/views.css">
+</head>
+<body>
+  <header class="shell-bar">
+    <div class="shell-brand">
+      <div class="shell-logo" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FACC15" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"></path>
+          <path d="M8.5 12l2.5 2.5 4.5-5"></path>
+        </svg>
+      </div>
+      <div class="shell-brand-title">
+        <strong>MyHSSE · JARAK AMAN v0.7</strong>
+        <span>PT Pelabuhan Indonesia (Persero) · Prototipe Quick Win</span>
+      </div>
+      <span id="shell-phase-pill" class="shell-phase-pill">NORMAL</span>
+    </div>
+
+    <nav class="shell-nav" aria-label="Pilih Peran Demo">
+      <button class="shell-nav-btn" data-view-btn="split">Split: HP + Kendali</button>
+      <button class="shell-nav-btn" data-view-btn="mobile">HP Pekerja</button>
+      <button class="shell-nav-btn" data-view-btn="control">Ruang Kendali</button>
+      <button class="shell-nav-btn" data-view-btn="kiosk">Kiosk Gate</button>
+      <button class="shell-nav-btn" data-view-btn="marshal">Petugas Titik Kumpul</button>
+    </nav>
+
+    <div class="shell-actions">
+      <button id="btn-fast-toggle" class="shell-tool-btn" type="button">Timer ×1</button>
+      <button id="btn-theme-toggle" class="shell-tool-btn" type="button">Tema: Gelap</button>
+      <button id="btn-demo-reset" class="shell-tool-btn" type="button">Reset Demo</button>
+    </div>
+  </header>
+
+  <main id="workspace-root" class="workspace-root mode-split">
+    <section id="mount-mobile" class="mount-pane" aria-label="Simulasi HP Pekerja MyHSSE"></section>
+    <section id="mount-control" class="mount-pane" aria-label="Dashboard Ruang Kendali"></section>
+    <section id="mount-kiosk" class="mount-pane" hidden aria-label="Kiosk Pos Gate Tanpa HP"></section>
+    <section id="mount-marshal" class="mount-pane" hidden aria-label="Tablet Petugas Titik Kumpul"></section>
+  </main>
+
+  <div id="modal-portal"></div>
+  <div id="global-toast" class="global-toast" hidden></div>
+
+  <script defer src="./js/data.js"></script>
+  <script defer src="./js/store.js"></script>
+  <script defer src="./js/views/mobile.js"></script>
+  <script defer src="./js/views/control.js"></script>
+  <script defer src="./js/views/kiosk.js"></script>
+  <script defer src="./js/views/marshal.js"></script>
+  <script defer src="./js/app.js"></script>
+</body>
+</html>
