@@ -1,7 +1,7 @@
 # JARAK AMAN — Modul Safety Induction & Pemantauan Pekerja (MyHSSE v0.7)
 
 Prototipe interaktif **4 peran** untuk Action Learning Project (ALP) Kelompok 36 — **PT Pelabuhan Indonesia (Persero)**.  
-Dirancang sebagai *quick win* perangkat lunak murni di dalam **MyHSSE** (tanpa sensor atau perangkat keras baru pada alat maupun pekerja), mengacu pada [PRD_JARAK_AMAN_MyHSSE_v0.7.md](./PRD_JARAK_AMAN_MyHSSE_v0.7.md) dan [Handbook_Presentasi_ALP36_JARAK_AMAN_v3.md](./Handbook_Presentasi_ALP36_JARAK_AMAN_v3.md).
+Dirancang sebagai *quick win* perangkat lunak murni di dalam **MyHSSE** (tanpa sensor atau perangkat keras baru pada alat maupun pekerja), mengacu pada [PRD_JARAK_AMAN_MyHSSE_v0.7.md](./docs/PRD_JARAK_AMAN_MyHSSE_v0.7.md) dan [Handbook_Presentasi_ALP36_JARAK_AMAN_v3.md](./docs/Handbook_Presentasi_ALP36_JARAK_AMAN_v3.md).
 
 ---
 
