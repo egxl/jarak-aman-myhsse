@@ -7,12 +7,12 @@ def run():
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page(viewport={"width": 1440, "height": 900})
-        page.set_default_timeout(3000)
         errors = []
         page.on("pageerror", lambda err: errors.append(f"pageerror: {err}"))
         page.on("console", lambda msg: errors.append(f"console.{msg.type}: {msg.text}") if msg.type == "error" else None)
 
         page.goto(APP_URL, wait_until="load")
+        page.set_default_timeout(3000)
 
         # 1. Kiosk Gate: toggle EN -> ID, check-in TKBM Suherman + 1 passenger + PPE enforcement + borrowed APD
         page.click('[data-view-btn="kiosk"]')
