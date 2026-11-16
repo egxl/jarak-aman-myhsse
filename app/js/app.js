@@ -4,9 +4,27 @@
   const NS = (root.JARAK_AMAN = root.JARAK_AMAN || {});
   NS.Views = NS.Views || {};
 
+  const THEME_KEY = 'jarak-aman-theme';
+  const themeChan = (function () {
+    try {
+      return typeof root.BroadcastChannel === 'function'
+        ? new root.BroadcastChannel('jarak-aman-theme-v07')
+        : null;
+    } catch (_) {
+      return null;
+    }
+  })();
+
   let activeView = 'split';
-  let themeOverridden = false;
   let toastTimer = null;
+
+  function readSavedTheme() {
+    try {
+      const saved = root.localStorage && root.localStorage.getItem(THEME_KEY);
+      if (saved === 'light' || saved === 'dark') return saved;
+    } catch (_) {}
+    return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+  }
 
   function parseQueryView() {
     try {
@@ -19,11 +37,17 @@
     return root.innerWidth && root.innerWidth < 1100 ? 'mobile' : 'split';
   }
 
-  function applyTheme(theme) {
+  function applyTheme(theme, persist) {
     const t = theme === 'light' ? 'light' : 'dark';
     document.documentElement.dataset.theme = t;
     const btn = document.getElementById('btn-theme-toggle');
     if (btn) btn.textContent = t === 'dark' ? 'Tema: Gelap' : 'Tema: Terang';
+    if (persist) {
+      try { if (root.localStorage) root.localStorage.setItem(THEME_KEY, t); } catch (_) {}
+      if (themeChan) {
+        try { themeChan.postMessage({ type: 'SYNC_THEME', theme: t }); } catch (_) {}
+      }
+    }
   }
 
   function showToast(msg) {
@@ -97,11 +121,6 @@
       btn.classList.toggle('active', btn.getAttribute('data-view-btn') === activeView);
     });
 
-    if (!themeOverridden) {
-      const narrow = root.innerWidth && root.innerWidth < 768;
-      applyTheme(narrow || activeView === 'mobile' || activeView === 'kiosk' ? 'light' : 'dark');
-    }
-
     if (store) renderAll(store);
   }
 
@@ -110,6 +129,8 @@
     const store = new NS.Store();
     NS.storeInstance = store;
 
+    applyTheme(readSavedTheme(), false);
+
     document.querySelectorAll('[data-view-btn]').forEach((btn) => {
       btn.addEventListener('click', () => setView(btn.getAttribute('data-view-btn'), store));
     });
@@ -117,10 +138,22 @@
     const themeBtn = document.getElementById('btn-theme-toggle');
     if (themeBtn) {
       themeBtn.addEventListener('click', () => {
-        themeOverridden = true;
         const cur = document.documentElement.dataset.theme;
-        applyTheme(cur === 'dark' ? 'light' : 'dark');
+        applyTheme(cur === 'dark' ? 'light' : 'dark', true);
       });
+    }
+
+    root.addEventListener('storage', (ev) => {
+      if (ev.key === THEME_KEY && (ev.newValue === 'light' || ev.newValue === 'dark')) {
+        applyTheme(ev.newValue, false);
+      }
+    });
+    if (themeChan) {
+      themeChan.onmessage = (ev) => {
+        if (ev && ev.data && ev.data.type === 'SYNC_THEME') {
+          applyTheme(ev.data.theme, false);
+        }
+      };
     }
 
     const fastBtn = document.getElementById('btn-fast-toggle');

@@ -771,7 +771,7 @@
   min-height: 230px;
   container-type: size;
   border-radius: var(--r-md);
-  background: #05080C;
+  background: var(--map-bg);
   border: 1px solid var(--border-strong);
   overflow: hidden;
   display: flex;
@@ -786,14 +786,10 @@
   flex: none;
 }
 
-[data-theme="light"] .terminal-map-box {
-  background: #07131F;
-}
-
 .map-pin {
   position: absolute;
   transform: translate(-50%, -50%);
-  border: 1.5px solid #06090D;
+  border: 1.5px solid var(--map-pin-ring);
   cursor: pointer;
   transition: left 600ms linear, top 600ms linear, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -807,7 +803,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 0 1.5px var(--map-pin-halo);
 }
 
 .map-pin-equip {
@@ -820,7 +816,7 @@
 
 .map-pin-equip:hover {
   transform: translate(-50%, -50%) scale(1.12);
-  border-color: #FFFFFF;
+  border-color: var(--fg-primary);
 }
 
 /* Static High-Contrast Double-Ring SOS Beacon */

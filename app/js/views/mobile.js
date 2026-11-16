@@ -135,82 +135,82 @@
     const midX = Math.round((workerX + targetX) / 2);
     const midY = Math.round((workerY + targetY) / 2) - 8;
     return `
-      <div style="padding:8px 10px 9px;border-radius:12px;background:#0B121C;border:1px solid var(--phone-border)">
+      <div style="padding:8px 10px 9px;border-radius:12px;background:var(--phone-card-alt);border:1px solid var(--phone-border)">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <span style="font-size:12px;font-weight:700;color:#93C5FD;letter-spacing:0.02em">Peta Posisi Terminal</span>
-          <span style="font-size:12px;font-weight:600;color:#4ADE80">Geofence: Terkunci</span>
+          <span style="font-size:12px;font-weight:700;color:var(--phone-accent);letter-spacing:0.02em">Peta Posisi Terminal</span>
+          <span style="font-size:12px;font-weight:600;color:var(--sig-safe)">Geofence: Terkunci</span>
         </div>
-        <svg viewBox="0 0 340 108" style="width:100%;height:auto;display:block;border-radius:8px;background:#070D14">
+        <svg viewBox="0 0 340 108" style="width:100%;height:auto;display:block;border-radius:8px;background:var(--map-bg);border:1px solid var(--phone-border)">
           <defs>
             <pattern id="miniMapPortGrid" width="16" height="16" patternUnits="userSpaceOnUse">
-              <path d="M 16 0 L 0 0 0 16" fill="none" stroke="rgba(148,184,224,0.06)" stroke-width="0.75"/>
+              <path d="M 16 0 L 0 0 0 16" fill="none" stroke="var(--map-grid)" stroke-width="0.75"/>
             </pattern>
             <linearGradient id="miniMapSeaGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#0A2239" stop-opacity="0.95"/>
-              <stop offset="100%" stop-color="#0B131D" stop-opacity="0.45"/>
+              <stop offset="0%" style="stop-color:var(--map-sea-top);stop-opacity:0.95"/>
+              <stop offset="100%" style="stop-color:var(--map-sea-bot);stop-opacity:0.65"/>
             </linearGradient>
             <linearGradient id="miniMapPuckBeam" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.55"/>
-              <stop offset="100%" stop-color="#38BDF8" stop-opacity="0"/>
+              <stop offset="0%" style="stop-color:var(--phone-accent);stop-opacity:0.45"/>
+              <stop offset="100%" style="stop-color:var(--phone-accent);stop-opacity:0"/>
             </linearGradient>
           </defs>
           <rect width="340" height="108" fill="url(#miniMapPortGrid)"/>
           <rect x="0" y="0" width="340" height="24" fill="url(#miniMapSeaGrad)"/>
-          <line x1="0" y1="24" x2="340" y2="24" stroke="#2584E8" stroke-width="1" stroke-dasharray="3 3" opacity="0.65"/>
-          <text x="8" y="14" fill="#38BDF8" font-size="8.5" font-weight="700">LAUT JAWA · DERMAGA A / B</text>
+          <line x1="0" y1="24" x2="340" y2="24" stroke="var(--brand-blue)" stroke-width="1" stroke-dasharray="3 3" opacity="0.65"/>
+          <text x="8" y="14" fill="var(--map-sea-fg)" font-size="8.5" font-weight="700">LAUT JAWA · DERMAGA A / B</text>
 
           <!-- Quay Cranes -->
-          <rect x="20" y="18" width="28" height="12" rx="2.5" fill="#13263E" stroke="#38BDF8" stroke-width="1"/>
-          <text x="34" y="27" fill="#E2EEF9" font-size="7.5" font-weight="700" text-anchor="middle">QC-01</text>
-          <rect x="56" y="18" width="28" height="12" rx="2.5" fill="#13263E" stroke="#FB923C" stroke-width="1"/>
-          <text x="70" y="27" fill="#FDE68A" font-size="7.5" font-weight="700" text-anchor="middle">QC-02</text>
+          <rect x="20" y="18" width="28" height="12" rx="2.5" fill="var(--map-equip-bg)" stroke="var(--map-sea-fg)" stroke-width="1"/>
+          <text x="34" y="27" fill="var(--map-equip-fg)" font-size="7.5" font-weight="700" text-anchor="middle">QC-01</text>
+          <rect x="56" y="18" width="28" height="12" rx="2.5" fill="var(--map-equip-bg)" stroke="var(--sig-warn)" stroke-width="1"/>
+          <text x="70" y="27" fill="var(--sig-warn)" font-size="7.5" font-weight="700" text-anchor="middle">QC-02</text>
 
           <!-- Container Blocks C01-C04 -->
-          <rect x="16" y="42" width="32" height="14" rx="2.5" fill="#142942" stroke="#294A6E" stroke-width="0.9"/>
-          <text x="32" y="52" fill="#94A3B8" font-size="7.5" text-anchor="middle">C01</text>
-          <rect x="54" y="42" width="32" height="14" rx="2.5" fill="#142942" stroke="#294A6E" stroke-width="0.9"/>
-          <text x="70" y="52" fill="#94A3B8" font-size="7.5" text-anchor="middle">C02</text>
-          <rect x="92" y="42" width="32" height="14" rx="2.5" fill="#142942" stroke="#294A6E" stroke-width="0.9"/>
-          <text x="108" y="52" fill="#94A3B8" font-size="7.5" text-anchor="middle">C03</text>
-          <rect x="130" y="42" width="34" height="14" rx="2.5" fill="rgba(37,132,232,0.22)" stroke="#38BDF8" stroke-width="1"/>
-          <text x="147" y="52" fill="#BAE6FD" font-size="7.5" font-weight="700" text-anchor="middle">C04</text>
+          <rect x="16" y="42" width="32" height="14" rx="2.5" fill="var(--map-block-bg)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+          <text x="32" y="52" fill="var(--map-block-fg)" font-size="7.5" text-anchor="middle">C01</text>
+          <rect x="54" y="42" width="32" height="14" rx="2.5" fill="var(--map-block-bg)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+          <text x="70" y="52" fill="var(--map-block-fg)" font-size="7.5" text-anchor="middle">C02</text>
+          <rect x="92" y="42" width="32" height="14" rx="2.5" fill="var(--map-block-bg)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+          <text x="108" y="52" fill="var(--map-block-fg)" font-size="7.5" text-anchor="middle">C03</text>
+          <rect x="130" y="42" width="34" height="14" rx="2.5" fill="var(--brand-blue-bg)" stroke="var(--phone-accent)" stroke-width="1"/>
+          <text x="147" y="52" fill="var(--phone-accent)" font-size="7.5" font-weight="700" text-anchor="middle">C04</text>
 
           <!-- Haulage Lane -->
-          <line x1="16" y1="68" x2="210" y2="68" stroke="#1E293B" stroke-width="5"/>
-          <line x1="16" y1="68" x2="210" y2="68" stroke="#475569" stroke-width="0.8" stroke-dasharray="4 4"/>
-          <text x="16" y="79" fill="#64748B" font-size="7" font-weight="600">JALUR ALAT BERAT · RS-07 AKTIF</text>
+          <line x1="16" y1="68" x2="210" y2="68" stroke="var(--map-road-bg)" stroke-width="5"/>
+          <line x1="16" y1="68" x2="210" y2="68" stroke="var(--map-road-line)" stroke-width="0.8" stroke-dasharray="4 4"/>
+          <text x="16" y="79" fill="var(--map-road-fg)" font-size="7" font-weight="600">JALUR ALAT BERAT · RS-07 AKTIF</text>
 
           <!-- Gate 3 -->
-          <rect x="16" y="85" width="76" height="17" rx="3.5" fill="#102033" stroke="#294A6E" stroke-width="0.9"/>
-          <text x="54" y="96.5" fill="#94A3B8" font-size="7.5" font-weight="700" text-anchor="middle">GATE 3 · IN/OUT</text>
+          <rect x="16" y="85" width="76" height="17" rx="3.5" fill="var(--map-yard-bg)" stroke="var(--map-deck-stroke)" stroke-width="0.9"/>
+          <text x="54" y="96.5" fill="var(--map-block-fg)" font-size="7.5" font-weight="700" text-anchor="middle">GATE 3 · IN/OUT</text>
 
           <!-- Assembly POIs -->
           <g transform="translate(246, 36)">
-            <rect x="0" y="0" width="84" height="42" rx="6" fill="rgba(34,197,94,0.14)" stroke="#4ADE80" stroke-width="1.2"/>
-            <circle cx="13" cy="14" r="6" fill="#22C55E"/>
-            <path d="M10 14l2 2 4-4" stroke="#FFFFFF" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            <text x="23" y="16" fill="#FFFFFF" font-size="8" font-weight="700">GEDUNG B</text>
-            <text x="8" y="32" fill="#86EFAC" font-size="7">Titik Kumpul · 0/40</text>
+            <rect x="0" y="0" width="84" height="42" rx="6" fill="var(--map-safe-bg)" stroke="var(--sig-safe)" stroke-width="1.2"/>
+            <circle cx="13" cy="14" r="6" fill="var(--sig-safe)"/>
+            <path d="M10 14l2 2 4-4" stroke="var(--map-pin-ring)" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="23" y="16" fill="var(--map-safe-sub)" font-size="8" font-weight="700">GEDUNG B</text>
+            <text x="8" y="32" fill="var(--map-safe-fg)" font-size="7">Titik Kumpul · 0/40</text>
           </g>
-          <rect x="180" y="82" width="60" height="20" rx="4" fill="rgba(250,204,21,0.10)" stroke="#FACC15" stroke-width="1" stroke-dasharray="3 2"/>
-          <text x="210" y="94.5" fill="#FEF08A" font-size="7" font-weight="700" text-anchor="middle">AREA TIMUR</text>
+          <rect x="180" y="82" width="60" height="20" rx="4" fill="var(--brand-gold-bg)" stroke="var(--brand-gold)" stroke-width="1" stroke-dasharray="3 2"/>
+          <text x="210" y="94.5" fill="var(--brand-gold-fg)" font-size="7" font-weight="700" text-anchor="middle">AREA TIMUR</text>
 
           <!-- Preview Evac Path -->
-          <path d="M ${workerX} ${workerY} Q ${midX + 6} ${targetY} ${targetX} ${targetY}" fill="none" stroke="#4ADE80" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round"/>
+          <path d="M ${workerX} ${workerY} Q ${midX + 6} ${targetY} ${targetX} ${targetY}" fill="none" stroke="var(--sig-safe)" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round"/>
 
           <!-- Distance Pill (placed cleanly along lower curve) -->
           <g transform="translate(${midX - 18}, ${targetY - 7})">
-            <rect width="50" height="14" rx="7" fill="rgba(0,0,0,0.82)" stroke="rgba(255,255,255,0.2)" stroke-width="0.7"/>
-            <text x="25" y="9.5" fill="#FFFFFF" font-size="7" font-weight="600" text-anchor="middle">320m · ~3m</text>
+            <rect width="50" height="14" rx="7" fill="var(--map-pill-bg)" stroke="var(--map-pill-border)" stroke-width="0.7"/>
+            <text x="25" y="9.5" fill="var(--map-pill-fg)" font-size="7" font-weight="600" text-anchor="middle">320m · ~3m</text>
           </g>
 
           <!-- Apple Maps Location Puck + Cone -->
           <g transform="translate(${workerX}, ${workerY})">
             <polygon points="0,0 24,-10 24,10" fill="url(#miniMapPuckBeam)"/>
-            <circle cx="0" cy="0" r="11" fill="#38BDF8" opacity="0.24"/>
-            <circle cx="0" cy="0" r="5" fill="#2584E8" stroke="#FFFFFF" stroke-width="1.8"/>
-            <rect x="8" y="-14" width="68" height="13" rx="6.5" fill="rgba(0,0,0,0.84)" stroke="rgba(255,255,255,0.24)" stroke-width="0.6"/>
-            <text x="13" y="-5" fill="#FFFFFF" font-size="7" font-weight="600">Andi · Dermaga A</text>
+            <circle cx="0" cy="0" r="11" fill="var(--phone-accent)" opacity="0.24"/>
+            <circle cx="0" cy="0" r="5" fill="var(--brand-blue)" stroke="var(--map-pin-ring)" stroke-width="1.8"/>
+            <rect x="8" y="-14" width="68" height="13" rx="6.5" fill="var(--map-pill-bg)" stroke="var(--map-pill-border)" stroke-width="0.6"/>
+            <text x="13" y="-5" fill="var(--map-pill-fg)" font-size="7" font-weight="600">Andi · Dermaga A</text>
           </g>
         </svg>
       </div>
@@ -546,16 +546,16 @@
         ];
 
         return `
-          <div style="flex:1;display:flex;flex-direction:column;background:#091727;color:#F8FAFC">
-            <div style="padding:10px 16px 2px;font-size:12px;color:#94A3B8;text-align:center">${m.evacView === 'lock' ? 'Layar terkunci · Live Activity aktif' : 'Membuka aplikasi lain · ketuk Dynamic Island di atas'}</div>
+          <div style="flex:1;display:flex;flex-direction:column;background:var(--phone-os-bg);color:var(--phone-os-fg)">
+            <div style="padding:10px 16px 2px;font-size:12px;color:var(--phone-os-muted);text-align:center">${m.evacView === 'lock' ? 'Layar terkunci · Live Activity aktif' : 'Membuka aplikasi lain · ketuk Dynamic Island di atas'}</div>
             <div style="flex:1;padding:12px 16px 16px;display:flex;flex-direction:column;gap:14px">
               ${m.evacView === 'lock' ? `
                 <div style="text-align:center;padding:14px 0 6px">
                   <div class="mono" style="font-size:44px;font-weight:600;line-height:1">14:04</div>
-                  <div style="font-size:12.5px;color:#94A3B8;margin-top:6px">Senin, 16 November 2026</div>
+                  <div style="font-size:12.5px;color:var(--phone-os-muted);margin-top:6px">Senin, 16 November 2026</div>
                 </div>
-                <div style="padding:14px;border-radius:16px;background:rgba(19,38,62,0.92);border:1px solid rgba(148,184,224,0.28);display:flex;flex-direction:column;gap:10px">
-                  <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#FCA5A5">
+                <div style="padding:14px;border-radius:16px;background:var(--phone-os-card);border:1px solid var(--phone-os-card-border);display:flex;flex-direction:column;gap:10px">
+                  <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--phone-os-alert)">
                     <span>LIVE ACTIVITY · EVAKUASI</span>
                     <span class="mono">${nav.timerText}</span>
                   </div>
@@ -565,23 +565,23 @@
                     </div>
                     <div style="min-width:0">
                       <div style="font-size:15px;font-weight:700">${esc(nav.stepText)}</div>
-                      <div style="font-size:12.5px;color:#CBD5E1">${esc(nav.stepSub)}</div>
+                      <div style="font-size:12.5px;color:var(--phone-os-subfg)">${esc(nav.stepSub)}</div>
                     </div>
                   </div>
-                  <div style="font-size:12px;color:#94A3B8">${nav.remain} m ke ${esc(nav.dest.name)} · ${esc(nav.haptic)}</div>
+                  <div style="font-size:12px;color:var(--phone-os-muted)">${nav.remain} m ke ${esc(nav.dest.name)} · ${esc(nav.haptic)}</div>
                 </div>
               ` : `
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding-top:8px">
                   ${osApps.map((app) => `
                     <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
-                      <div style="width:48px;height:48px;border-radius:13px;background:${app.bg};display:grid;place-items:center;box-shadow:0 4px 12px rgba(0,0,0,0.3)">
+                      <div style="width:48px;height:48px;border-radius:13px;background:${app.bg};display:grid;place-items:center;box-shadow:0 4px 12px rgba(0,0,0,0.22)">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${app.icon}</svg>
                       </div>
-                      <span style="font-size:12px;color:#CBD5E1">${app.name}</span>
+                      <span style="font-size:12px;color:var(--phone-os-subfg)">${app.name}</span>
                     </div>
                   `).join('')}
                 </div>
-                <div style="padding:12px;border-radius:12px;background:#13263E;border:1px solid rgba(148,184,224,0.2);font-size:12.5px;color:#CBD5E1;line-height:1.45">
+                <div style="padding:12px;border-radius:12px;background:var(--phone-os-card);border:1px solid var(--phone-os-card-border);font-size:12.5px;color:var(--phone-os-subfg);line-height:1.45">
                   Panduan arah tetap muncul di luar aplikasi melalui <strong>iOS Dynamic Island</strong>. Ketuk kapsul hitam di atas untuk memperluas rute.
                 </div>
               `}
@@ -614,26 +614,26 @@
               </div>
             </div>
 
-            <div style="border-radius:12px;border:1px solid var(--phone-border);overflow:hidden;background:#070D14">
+            <div style="border-radius:12px;border:1px solid var(--phone-border);overflow:hidden;background:var(--map-bg)">
               <svg viewBox="0 0 330 112" style="width:100%;height:auto;display:block">
                 <defs>
                   <pattern id="evacMiniGrid" width="16" height="16" patternUnits="userSpaceOnUse">
-                    <path d="M 16 0 L 0 0 0 16" fill="none" stroke="rgba(148,184,224,0.06)" stroke-width="0.75"/>
+                    <path d="M 16 0 L 0 0 0 16" fill="none" stroke="var(--map-grid)" stroke-width="0.75"/>
                   </pattern>
                 </defs>
                 <rect width="330" height="112" fill="url(#evacMiniGrid)"/>
-                <rect x="0" y="0" width="330" height="20" fill="${state.evacHazard === 'tsunami' ? 'rgba(185,28,28,0.35)' : '#0B1D30'}"/>
-                <text x="10" y="13.5" fill="${state.evacHazard === 'tsunami' ? '#FECACA' : '#38BDF8'}" font-size="8" font-weight="700">LAUT · DERMAGA A / B</text>
-                <rect x="20" y="46" width="44" height="14" rx="2" fill="#162D48" stroke="#294D73" stroke-width="0.8"/>
-                <rect x="74" y="46" width="44" height="14" rx="2" fill="#162D48" stroke="#294D73" stroke-width="0.8"/>
-                <rect x="252" y="50" width="70" height="34" rx="5" fill="#123A26" stroke="${nav.dest.id === 'gedung-b' ? '#FACC15' : '#4ADE80'}" stroke-width="${nav.dest.id === 'gedung-b' ? '1.8' : '1'}"/>
-                <text x="287" y="71" text-anchor="middle" fill="#86EFAC" font-size="9.5" font-weight="700">Gedung B</text>
-                <rect x="192" y="88" width="56" height="21" rx="4" fill="#123A26" stroke="${nav.dest.id === 'area-timur' ? '#FACC15' : '#4ADE80'}" stroke-dasharray="3 2"/>
-                <text x="220" y="101" text-anchor="middle" fill="#FEF08A" font-size="8" font-weight="700">Area Timur</text>
-                <polyline points="${nav.allPts}" fill="none" stroke="#64748B" stroke-width="3" stroke-dasharray="5 5"/>
-                <polyline points="${nav.donePts}" fill="none" stroke="#FACC15" stroke-width="3.5" stroke-linecap="round"/>
-                <circle cx="${nav.dotX}" cy="${nav.dotY}" r="10" fill="#38BDF8" opacity="0.25"/>
-                <circle cx="${nav.dotX}" cy="${nav.dotY}" r="5.5" fill="#2584E8" stroke="#FFFFFF" stroke-width="2"/>
+                <rect x="0" y="0" width="330" height="20" fill="${state.evacHazard === 'tsunami' ? 'rgba(185,28,28,0.85)' : 'var(--map-sea-top)'}"/>
+                <text x="10" y="13.5" fill="${state.evacHazard === 'tsunami' ? '#FECACA' : 'var(--map-sea-fg)'}" font-size="8" font-weight="700">LAUT · DERMAGA A / B</text>
+                <rect x="20" y="46" width="44" height="14" rx="2" fill="var(--map-block-bg)" stroke="var(--map-block-stroke)" stroke-width="0.8"/>
+                <rect x="74" y="46" width="44" height="14" rx="2" fill="var(--map-block-bg)" stroke="var(--map-block-stroke)" stroke-width="0.8"/>
+                <rect x="252" y="50" width="70" height="34" rx="5" fill="var(--map-safe-bg)" stroke="${nav.dest.id === 'gedung-b' ? 'var(--brand-gold)' : 'var(--sig-safe)'}" stroke-width="${nav.dest.id === 'gedung-b' ? '1.8' : '1'}"/>
+                <text x="287" y="71" text-anchor="middle" fill="var(--map-safe-fg)" font-size="9.5" font-weight="700">Gedung B</text>
+                <rect x="192" y="88" width="56" height="21" rx="4" fill="var(--map-safe-bg)" stroke="${nav.dest.id === 'area-timur' ? 'var(--brand-gold)' : 'var(--sig-safe)'}" stroke-dasharray="3 2"/>
+                <text x="220" y="101" text-anchor="middle" fill="var(--brand-gold-fg)" font-size="8" font-weight="700">Area Timur</text>
+                <polyline points="${nav.allPts}" fill="none" stroke="var(--border-strong)" stroke-width="3" stroke-dasharray="5 5"/>
+                <polyline points="${nav.donePts}" fill="none" stroke="var(--brand-gold)" stroke-width="3.5" stroke-linecap="round"/>
+                <circle cx="${nav.dotX}" cy="${nav.dotY}" r="10" fill="var(--phone-accent)" opacity="0.25"/>
+                <circle cx="${nav.dotX}" cy="${nav.dotY}" r="5.5" fill="var(--brand-blue)" stroke="var(--map-pin-ring)" stroke-width="2"/>
               </svg>
             </div>
             <div style="font-size:12px;color:var(--phone-muted);line-height:1.35">${nav.remain} m ke ${esc(nav.dest.name)} · ${esc(nav.haptic)}</div>
@@ -713,7 +713,7 @@
     const scr = m.screen;
     if (scr === 'sos') return { bg: '#450A0A', fg: '#FEF2F2' };
     if (scr === 'alert' && (m.evacView === 'other' || m.evacView === 'lock')) {
-      return { bg: '#091727', fg: '#F8FAFC' };
+      return { bg: 'var(--phone-os-bg)', fg: 'var(--phone-os-fg)' };
     }
     if (scr === 'alert') {
       return { bg: state.evacSource === 'mandiri' ? '#9A3412' : '#B91C1C', fg: '#FFFFFF' };

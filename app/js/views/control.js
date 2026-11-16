@@ -27,11 +27,7 @@
   }
 
   function pinColor(tone) {
-    if (tone === 'safe') return '#4ADE80';
-    if (tone === 'warn') return '#FB923C';
-    if (tone === 'crit') return '#F87171';
-    if (tone === 'info') return '#38BDF8';
-    return '#94A3B8';
+    return toneColor(tone);
   }
 
   function renderModals(state, rows, compliance) {
@@ -221,9 +217,9 @@
             const tx = dest.mapX * 12 + 40;
             const ty = dest.mapY * 6.2 + 24;
             if (state.routeClosed && r.x > 48) {
-              return `<path d="M ${x1.toFixed(1)},${y1.toFixed(1)} Q 535,340 ${tx.toFixed(1)},${ty.toFixed(1)}" fill="none" stroke="#FB923C" stroke-width="1.3" stroke-dasharray="5 5" opacity="0.45"/>`;
+              return `<path d="M ${x1.toFixed(1)},${y1.toFixed(1)} Q 535,340 ${tx.toFixed(1)},${ty.toFixed(1)}" fill="none" stroke="var(--sig-warn)" stroke-width="1.4" stroke-dasharray="5 5" opacity="0.7"/>`;
             }
-            return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${tx.toFixed(1)}" y2="${ty.toFixed(1)}" stroke="#FB923C" stroke-width="1.3" stroke-dasharray="5 5" opacity="0.45"/>`;
+            return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${tx.toFixed(1)}" y2="${ty.toFixed(1)}" stroke="var(--sig-warn)" stroke-width="1.4" stroke-dasharray="5 5" opacity="0.7"/>`;
           })
           .join('')
       : '';
@@ -236,8 +232,8 @@
           const bx = startX + col * 102;
           const by = 248 + row * 68;
           const lbl = `${prefix}${String(idx).padStart(2, '0')}${reeferEnd && idx % 4 === 0 ? ' [RFR]' : ''}`;
-          blocks.push(`<rect x="${bx}" y="${by}" width="88" height="48" rx="3" fill="#102134" stroke="#223E5C" stroke-width="1"/>`);
-          blocks.push(`<text x="${bx + 6}" y="${by + 16}" fill="#7FA0C4" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="600">${lbl}</text>`);
+          blocks.push(`<rect x="${bx}" y="${by}" width="88" height="48" rx="3" fill="var(--map-block-bg)" stroke="var(--map-block-stroke)" stroke-width="1"/>`);
+          blocks.push(`<text x="${bx + 6}" y="${by + 16}" fill="var(--map-block-fg)" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="600">${lbl}</text>`);
         }
       }
       return blocks.join('');
@@ -260,12 +256,12 @@
               <svg viewBox="0 0 1200 620" style="width:100%;height:100%;display:block">
                 <defs>
                   <pattern id="gridBlueprint" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#0D1927" stroke-width="0.9"/>
-                    <circle cx="0" cy="0" r="1.4" fill="#1B3048"/>
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="var(--map-grid)" stroke-width="0.9"/>
+                    <circle cx="0" cy="0" r="1.4" fill="var(--map-grid-dot)"/>
                   </pattern>
                   <linearGradient id="seaGradPriok" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="${evac && state.evacHazard === 'tsunami' ? '#4C111B' : '#071422'}"/>
-                    <stop offset="100%" stop-color="${evac && state.evacHazard === 'tsunami' ? '#6B1926' : '#0C233B'}"/>
+                    <stop offset="0%" style="stop-color:${evac && state.evacHazard === 'tsunami' ? '#7F1D1D' : 'var(--map-sea-top)'}"/>
+                    <stop offset="100%" style="stop-color:${evac && state.evacHazard === 'tsunami' ? '#991B1B' : 'var(--map-sea-bot)'}"/>
                   </linearGradient>
                 </defs>
 
@@ -273,96 +269,96 @@
                 <rect width="1200" height="620" fill="url(#gridBlueprint)"/>
 
                 <!-- Java Sea Waterfront & Vessels (y: 0..102) -->
-                <rect x="0" y="0" width="1200" height="102" fill="url(#seaGradPriok)" stroke="#183450" stroke-width="1"/>
-                <path d="M 0,24 Q 150,14 300,24 T 600,24 T 900,24 T 1200,24" fill="none" stroke="${evac && state.evacHazard === 'tsunami' ? '#9F3242' : '#1E4164'}" stroke-width="1.2" stroke-dasharray="6 6"/>
-                <text x="20" y="28" fill="${evac && state.evacHazard === 'tsunami' ? '#FECDD3' : '#38BDF8'}" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">${evac && state.evacHazard === 'tsunami' ? 'LAUT JAWA // ZONA MERAH TSUNAMI' : 'LAUT JAWA // ALUR PELAYARAN TANJUNG PRIOK · DEPTH -14.5M LWS'}</text>
+                <rect x="0" y="0" width="1200" height="102" fill="url(#seaGradPriok)" stroke="var(--map-yard-stroke)" stroke-width="1"/>
+                <path d="M 0,24 Q 150,14 300,24 T 600,24 T 900,24 T 1200,24" fill="none" stroke="${evac && state.evacHazard === 'tsunami' ? '#FCA5A5' : 'var(--map-sea-wave)'}" stroke-width="1.2" stroke-dasharray="6 6"/>
+                <text x="20" y="28" fill="${evac && state.evacHazard === 'tsunami' ? '#FECDD3' : 'var(--map-sea-fg)'}" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">${evac && state.evacHazard === 'tsunami' ? 'LAUT JAWA // ZONA MERAH TSUNAMI' : 'LAUT JAWA // ALUR PELAYARAN TANJUNG PRIOK · DEPTH -14.5M LWS'}</text>
 
                 <!-- Vessel 1: MV MERATUS BALI (Berth A) -->
                 <g transform="translate(44, 46)">
-                  <path d="M 0,28 L 24,4 L 350,4 L 385,28 L 350,48 L 24,48 Z" fill="#0B1B2B" stroke="#2D5278" stroke-width="1.5"/>
-                  <rect x="52" y="10" width="22" height="32" fill="#132D46" stroke="#1E4469" stroke-width="0.9"/>
-                  <rect x="82" y="10" width="22" height="32" fill="#132D46" stroke="#1E4469" stroke-width="0.9"/>
-                  <rect x="112" y="10" width="22" height="32" fill="#132D46" stroke="#1E4469" stroke-width="0.9"/>
-                  <rect x="142" y="10" width="22" height="32" fill="#132D46" stroke="#1E4469" stroke-width="0.9"/>
-                  <rect x="172" y="10" width="22" height="32" fill="#132D46" stroke="#1E4469" stroke-width="0.9"/>
-                  <rect x="202" y="10" width="22" height="32" fill="#132D46" stroke="#1E4469" stroke-width="0.9"/>
-                  <rect x="285" y="11" width="42" height="30" fill="#1B3C5C" stroke="#38BDF8" stroke-width="1"/>
-                  <text x="306" y="30" fill="#E2EEF9" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" text-anchor="middle">BRIDGE</text>
-                  <text x="64" y="30" fill="#93C5FD" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="700">MV MERATUS BALI // BERTH A</text>
+                  <path d="M 0,28 L 24,4 L 350,4 L 385,28 L 350,48 L 24,48 Z" fill="var(--map-vessel-bg)" stroke="var(--map-vessel-stroke)" stroke-width="1.5"/>
+                  <rect x="52" y="10" width="22" height="32" fill="var(--map-vessel-hatch)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+                  <rect x="82" y="10" width="22" height="32" fill="var(--map-vessel-hatch)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+                  <rect x="112" y="10" width="22" height="32" fill="var(--map-vessel-hatch)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+                  <rect x="142" y="10" width="22" height="32" fill="var(--map-vessel-hatch)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+                  <rect x="172" y="10" width="22" height="32" fill="var(--map-vessel-hatch)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+                  <rect x="202" y="10" width="22" height="32" fill="var(--map-vessel-hatch)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+                  <rect x="285" y="11" width="42" height="30" fill="var(--map-deck-bg)" stroke="var(--map-sea-fg)" stroke-width="1"/>
+                  <text x="306" y="30" fill="var(--map-deck-fg)" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" text-anchor="middle">BRIDGE</text>
+                  <text x="64" y="30" fill="var(--map-vessel-fg)" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="700">MV MERATUS BALI // BERTH A</text>
                 </g>
 
                 <!-- Vessel 2: MV SAMUDERA NUSANTARA (Berth B) -->
                 <g transform="translate(520, 46)">
-                  <path d="M 0,28 L 28,4 L 460,4 L 500,28 L 460,48 L 28,48 Z" fill="#0B1B2B" stroke="#2D5278" stroke-width="1.5"/>
-                  <rect x="58" y="10" width="22" height="32" fill="#132D46" stroke="#1E4469" stroke-width="0.9"/>
-                  <rect x="88" y="10" width="22" height="32" fill="#132D46" stroke="#1E4469" stroke-width="0.9"/>
-                  <rect x="118" y="10" width="22" height="32" fill="#132D46" stroke="#1E4469" stroke-width="0.9"/>
-                  <rect x="148" y="10" width="22" height="32" fill="#132D46" stroke="#1E4469" stroke-width="0.9"/>
-                  <rect x="178" y="10" width="22" height="32" fill="#132D46" stroke="#1E4469" stroke-width="0.9"/>
-                  <rect x="208" y="10" width="22" height="32" fill="#132D46" stroke="#1E4469" stroke-width="0.9"/>
-                  <rect x="238" y="10" width="22" height="32" fill="#132D46" stroke="#1E4469" stroke-width="0.9"/>
-                  <rect x="372" y="11" width="46" height="30" fill="#1B3C5C" stroke="#38BDF8" stroke-width="1"/>
-                  <text x="395" y="30" fill="#E2EEF9" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" text-anchor="middle">BRIDGE</text>
-                  <text x="72" y="30" fill="#93C5FD" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="700">MV SAMUDERA NUSANTARA // BERTH B</text>
+                  <path d="M 0,28 L 28,4 L 460,4 L 500,28 L 460,48 L 28,48 Z" fill="var(--map-vessel-bg)" stroke="var(--map-vessel-stroke)" stroke-width="1.5"/>
+                  <rect x="58" y="10" width="22" height="32" fill="var(--map-vessel-hatch)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+                  <rect x="88" y="10" width="22" height="32" fill="var(--map-vessel-hatch)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+                  <rect x="118" y="10" width="22" height="32" fill="var(--map-vessel-hatch)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+                  <rect x="148" y="10" width="22" height="32" fill="var(--map-vessel-hatch)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+                  <rect x="178" y="10" width="22" height="32" fill="var(--map-vessel-hatch)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+                  <rect x="208" y="10" width="22" height="32" fill="var(--map-vessel-hatch)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+                  <rect x="238" y="10" width="22" height="32" fill="var(--map-vessel-hatch)" stroke="var(--map-block-stroke)" stroke-width="0.9"/>
+                  <rect x="372" y="11" width="46" height="30" fill="var(--map-deck-bg)" stroke="var(--map-sea-fg)" stroke-width="1"/>
+                  <text x="395" y="30" fill="var(--map-deck-fg)" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700" text-anchor="middle">BRIDGE</text>
+                  <text x="72" y="30" fill="var(--map-vessel-fg)" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="700">MV SAMUDERA NUSANTARA // BERTH B</text>
                 </g>
 
                 <!-- Quay Apron & Crane Rail Strip (y: 102..204) -->
-                <rect x="24" y="106" width="448" height="58" rx="4" fill="#0F2032" stroke="${recovery ? '#F87171' : '#2C4E73'}" stroke-width="1.4"/>
-                <text x="36" y="126" fill="${recovery ? '#FCA5A5' : '#E2EEF9'}" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">${recovery ? 'DERMAGA A · DITUTUP SEMENTARA' : 'DERMAGA A // QUAY DECK'}</text>
+                <rect x="24" y="106" width="448" height="58" rx="4" fill="var(--map-deck-bg)" stroke="${recovery ? 'var(--sig-crit)' : 'var(--map-deck-stroke)'}" stroke-width="1.4"/>
+                <text x="36" y="126" fill="${recovery ? 'var(--sig-crit)' : 'var(--map-deck-fg)'}" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">${recovery ? 'DERMAGA A · DITUTUP SEMENTARA' : 'DERMAGA A // QUAY DECK'}</text>
 
-                <rect x="492" y="106" width="580" height="58" rx="4" fill="#0F2032" stroke="${recovery ? '#F87171' : '#2C4E73'}" stroke-width="1.4"/>
-                <text x="506" y="126" fill="${recovery ? '#FCA5A5' : '#E2EEF9'}" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">${recovery ? 'DERMAGA B · DITUTUP SEMENTARA' : 'DERMAGA B // QUAY DECK &amp; CRANE RAIL'}</text>
+                <rect x="492" y="106" width="580" height="58" rx="4" fill="var(--map-deck-bg)" stroke="${recovery ? 'var(--sig-crit)' : 'var(--map-deck-stroke)'}" stroke-width="1.4"/>
+                <text x="506" y="126" fill="${recovery ? 'var(--sig-crit)' : 'var(--map-deck-fg)'}" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">${recovery ? 'DERMAGA B · DITUTUP SEMENTARA' : 'DERMAGA B // QUAY DECK &amp; CRANE RAIL'}</text>
 
-                <rect x="0" y="166" width="1200" height="40" fill="#08111B" stroke="#182C42" stroke-width="1"/>
-                <line x1="0" y1="186" x2="1200" y2="186" stroke="#223D5A" stroke-width="1" stroke-dasharray="10 8"/>
-                <text x="24" y="182" fill="#7390B0" font-family="IBM Plex Mono, monospace" font-size="10.5">JALUR APRON DERMAGA // BATAS LAJU 20 KM/JAM</text>
+                <rect x="0" y="166" width="1200" height="40" fill="var(--map-road-bg)" stroke="var(--map-yard-stroke)" stroke-width="1"/>
+                <line x1="0" y1="186" x2="1200" y2="186" stroke="var(--map-road-line)" stroke-width="1" stroke-dasharray="10 8"/>
+                <text x="24" y="182" fill="var(--map-road-fg)" font-family="IBM Plex Mono, monospace" font-size="10.5">JALUR APRON DERMAGA // BATAS LAJU 20 KM/JAM</text>
 
                 <!-- Lapangan C (Blocks C01 - C12) -->
-                <rect x="52" y="216" width="456" height="248" rx="4" fill="#0B1826" stroke="#1D3652" stroke-width="1.2"/>
-                <text x="68" y="236" fill="#60A5FA" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">LAPANGAN C // BLOK PETIKEMAS C01–C12</text>
+                <rect x="52" y="216" width="456" height="248" rx="4" fill="var(--map-yard-bg)" stroke="var(--map-yard-stroke)" stroke-width="1.2"/>
+                <text x="68" y="236" fill="var(--sig-info)" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">LAPANGAN C // BLOK PETIKEMAS C01–C12</text>
                 ${yardBlocks(68, 'C', false)}
 
                 <!-- Central Haulage & Evac Corridor 02 -->
-                <rect x="518" y="216" width="38" height="248" fill="#08111B" stroke="#1A2E44" stroke-width="1"/>
-                <line x1="537" y1="216" x2="537" y2="464" stroke="#294866" stroke-width="1" stroke-dasharray="6 6"/>
-                <text x="541" y="340" fill="#7390B0" font-family="IBM Plex Mono, monospace" font-size="10" transform="rotate(90, 541, 340)">KORIDOR EVAK 02</text>
+                <rect x="518" y="216" width="38" height="248" fill="var(--map-road-bg)" stroke="var(--map-yard-stroke)" stroke-width="1"/>
+                <line x1="537" y1="216" x2="537" y2="464" stroke="var(--map-road-line)" stroke-width="1" stroke-dasharray="6 6"/>
+                <text x="541" y="340" fill="var(--map-road-fg)" font-family="IBM Plex Mono, monospace" font-size="10" transform="rotate(90, 541, 340)">KORIDOR EVAK 02</text>
 
                 <!-- Lapangan D (Blocks D01 - D12) -->
-                <rect x="566" y="216" width="388" height="248" rx="4" fill="#0B1826" stroke="#1D3652" stroke-width="1.2"/>
-                <text x="582" y="236" fill="#60A5FA" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">LAPANGAN D // BLOK EKSPOR &amp; REEFER</text>
+                <rect x="566" y="216" width="388" height="248" rx="4" fill="var(--map-yard-bg)" stroke="var(--map-yard-stroke)" stroke-width="1.2"/>
+                <text x="582" y="236" fill="var(--sig-info)" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">LAPANGAN D // BLOK EKSPOR &amp; REEFER</text>
                 ${yardBlocks(582, 'D', true)}
 
                 <!-- Gate 3 Pos Kiosk (x: 36..266, y: 492..600) -->
                 <g transform="translate(36, 492)">
-                  <rect x="0" y="0" width="230" height="108" rx="4" fill="#0A1826" stroke="#25486B" stroke-width="1.4"/>
-                  <line x1="0" y1="36" x2="230" y2="36" stroke="#1A324B" stroke-width="1"/>
-                  <line x1="0" y1="72" x2="230" y2="72" stroke="#1A324B" stroke-width="1"/>
-                  <rect x="196" y="10" width="14" height="16" rx="2" fill="#0284C7"/>
-                  <rect x="196" y="46" width="14" height="16" rx="2" fill="#0284C7"/>
-                  <rect x="196" y="82" width="14" height="16" rx="2" fill="#0284C7"/>
-                  <text x="14" y="24" fill="#38BDF8" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">GATE 3 · POS KIOSK</text>
-                  <text x="14" y="59" fill="#94B2D1" font-family="IBM Plex Mono, monospace" font-size="11">STID &amp; TAP KARTU</text>
-                  <text x="14" y="95" fill="#4ADE80" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="600">GEOFENCE PASIF AKTIF</text>
+                  <rect x="0" y="0" width="230" height="108" rx="4" fill="var(--map-yard-bg)" stroke="var(--map-deck-stroke)" stroke-width="1.4"/>
+                  <line x1="0" y1="36" x2="230" y2="36" stroke="var(--map-yard-stroke)" stroke-width="1"/>
+                  <line x1="0" y1="72" x2="230" y2="72" stroke="var(--map-yard-stroke)" stroke-width="1"/>
+                  <rect x="196" y="10" width="14" height="16" rx="2" fill="var(--brand-blue)"/>
+                  <rect x="196" y="46" width="14" height="16" rx="2" fill="var(--brand-blue)"/>
+                  <rect x="196" y="82" width="14" height="16" rx="2" fill="var(--brand-blue)"/>
+                  <text x="14" y="24" fill="var(--map-sea-fg)" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">GATE 3 · POS KIOSK</text>
+                  <text x="14" y="59" fill="var(--map-block-fg)" font-family="IBM Plex Mono, monospace" font-size="11">STID &amp; TAP KARTU</text>
+                  <text x="14" y="95" fill="var(--sig-safe)" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="600">GEOFENCE PASIF AKTIF</text>
                 </g>
 
                 <!-- Area Terbuka Timur (Open Seismic Muster Zone, mapX:60, mapY:88) -->
                 <g transform="translate(650, 504)">
-                  <rect x="0" y="0" width="256" height="98" rx="6" fill="#0D2B1D" stroke="${dest.id === 'area-timur' ? '#FACC15' : '#4ADE80'}" stroke-width="${dest.id === 'area-timur' ? '2.5' : '1.4'}" stroke-dasharray="6 4"/>
-                  <text x="16" y="28" fill="#FEF08A" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="700">AREA TERBUKA TIMUR</text>
-                  <text x="16" y="52" fill="#BBF7D0" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="600">Gempa / Overflow · ${timurCount}/60</text>
-                  <text x="16" y="76" fill="#86EFAC" font-family="IBM Plex Mono, monospace" font-size="10.5">Jauh struktur &amp; kontainer</text>
+                  <rect x="0" y="0" width="256" height="98" rx="6" fill="var(--map-safe-bg)" stroke="${dest.id === 'area-timur' ? 'var(--brand-gold)' : 'var(--sig-safe)'}" stroke-width="${dest.id === 'area-timur' ? '2.5' : '1.4'}" stroke-dasharray="6 4"/>
+                  <text x="16" y="28" fill="var(--brand-gold-fg)" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="700">AREA TERBUKA TIMUR</text>
+                  <text x="16" y="52" fill="var(--map-safe-sub)" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="600">Gempa / Overflow · ${timurCount}/60</text>
+                  <text x="16" y="76" fill="var(--map-safe-fg)" font-family="IBM Plex Mono, monospace" font-size="10.5">Jauh struktur &amp; kontainer</text>
                 </g>
 
                 <!-- Gedung Evakuasi B (Vertical Shelter, mapX:83, mapY:72) -->
                 <g transform="translate(966, 412)">
-                  <circle cx="110" cy="78" r="56" fill="none" stroke="#16A34A" stroke-width="1" opacity="0.45"/>
-                  <circle cx="110" cy="78" r="84" fill="none" stroke="#16A34A" stroke-width="0.9" stroke-dasharray="4 4" opacity="0.3"/>
-                  <rect x="0" y="0" width="214" height="162" rx="6" fill="#0B271A" stroke="${dest.id === 'gedung-b' ? '#FACC15' : '#4ADE80'}" stroke-width="${dest.id === 'gedung-b' ? '2.5' : '1.5'}"/>
-                  <rect x="10" y="10" width="194" height="142" rx="4" fill="none" stroke="#1E5E3D" stroke-width="1" stroke-dasharray="4 4"/>
-                  <text x="107" y="38" fill="#86EFAC" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="700" text-anchor="middle">GEDUNG EVAKUASI B</text>
-                  <text x="107" y="60" fill="#BBF7D0" font-family="IBM Plex Mono, monospace" font-size="11.5" text-anchor="middle">Tsunami / B3 · Shelter Vertikal</text>
-                  <text x="107" y="94" fill="#4ADE80" font-family="IBM Plex Mono, monospace" font-size="19" font-weight="800" text-anchor="middle">${gedungCount} / 40 AMAN</text>
-                  <text x="107" y="124" fill="#A7F3D0" font-family="IBM Plex Mono, monospace" font-size="10.5" text-anchor="middle">Geofence + Petugas Titik Kumpul</text>
+                  <circle cx="110" cy="78" r="56" fill="none" stroke="var(--sig-safe)" stroke-width="1" opacity="0.45"/>
+                  <circle cx="110" cy="78" r="84" fill="none" stroke="var(--sig-safe)" stroke-width="0.9" stroke-dasharray="4 4" opacity="0.3"/>
+                  <rect x="0" y="0" width="214" height="162" rx="6" fill="var(--map-safe-bg)" stroke="${dest.id === 'gedung-b' ? 'var(--brand-gold)' : 'var(--sig-safe)'}" stroke-width="${dest.id === 'gedung-b' ? '2.5' : '1.5'}"/>
+                  <rect x="10" y="10" width="194" height="142" rx="4" fill="none" stroke="var(--map-safe-border)" stroke-width="1" stroke-dasharray="4 4"/>
+                  <text x="107" y="38" fill="var(--map-safe-fg)" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="700" text-anchor="middle">GEDUNG EVAKUASI B</text>
+                  <text x="107" y="60" fill="var(--map-safe-sub)" font-family="IBM Plex Mono, monospace" font-size="11.5" text-anchor="middle">Tsunami / B3 · Shelter Vertikal</text>
+                  <text x="107" y="94" fill="var(--sig-safe)" font-family="IBM Plex Mono, monospace" font-size="19" font-weight="800" text-anchor="middle">${gedungCount} / 40 AMAN</text>
+                  <text x="107" y="124" fill="var(--map-safe-sub)" font-family="IBM Plex Mono, monospace" font-size="10.5" text-anchor="middle">Geofence + Petugas Titik Kumpul</text>
                 </g>
 
                 <!-- Roadblock Overlay -->
@@ -386,8 +382,8 @@
                     const selected = state.selectedEntity && state.selectedEntity.kind === 'equip' && state.selectedEntity.id === e.id;
                     return `
                       <g transform="translate(${cx.toFixed(1)}, ${cy.toFixed(1)})">
-                        <rect x="-22" y="-11" width="44" height="22" rx="3" fill="#0B1B2E" stroke="${selected ? '#FACC15' : fill}" stroke-width="${selected ? '2.2' : '1.6'}"/>
-                        <text x="0" y="4" fill="#FFFFFF" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="700" text-anchor="middle">${esc(e.id)}</text>
+                        <rect x="-22" y="-11" width="44" height="22" rx="3" fill="var(--map-equip-bg)" stroke="${selected ? 'var(--brand-gold)' : fill}" stroke-width="${selected ? '2.2' : '1.6'}"/>
+                        <text x="0" y="4" fill="var(--map-equip-fg)" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="700" text-anchor="middle">${esc(e.id)}</text>
                       </g>
                     `;
                   }).join('')}
@@ -500,7 +496,7 @@
               <strong style="font-size:14px">Peta Titik Rawan Mingguan (FR-7.7)</strong>
               <span class="badge badge-warn">Dari Laporan F12</span>
             </div>
-            <div style="border-radius:8px;border:1px solid var(--border-strong);overflow:hidden;background:#060C14">
+            <div style="border-radius:8px;border:1px solid var(--border-strong);overflow:hidden;background:var(--map-bg)">
               <svg viewBox="0 0 800 210" style="width:100%;height:auto;display:block">
                 <defs>
                   <radialGradient id="heatCriticalGrad" cx="50%" cy="50%" r="50%">
@@ -514,32 +510,32 @@
                     <stop offset="100%" stop-color="#D97706" stop-opacity="0"/>
                   </radialGradient>
                 </defs>
-                <rect width="800" height="210" fill="#060B12"/>
-                <rect x="0" y="0" width="800" height="26" fill="#0B1929" stroke="#182E46"/>
-                <text x="14" y="17" fill="#38BDF8" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="700">LAUT JAWA // ALUR PELAYARAN</text>
-                <rect x="16" y="32" width="768" height="32" fill="#0E1E30" stroke="#1E3A56"/>
-                <text x="24" y="52" fill="#94A3B8" font-family="IBM Plex Mono, monospace" font-size="10">DERMAGA A</text>
-                <text x="680" y="52" fill="#94A3B8" font-family="IBM Plex Mono, monospace" font-size="10">DERMAGA B</text>
-                <rect x="44" y="74" width="600" height="90" rx="4" fill="#0A1522" stroke="#1A2E45"/>
-                <text x="56" y="92" fill="#64748B" font-family="IBM Plex Mono, monospace" font-size="10">LAPANGAN PETIKEMAS C &amp; D</text>
-                <rect x="16" y="170" width="120" height="32" rx="4" fill="#0B1B2B" stroke="#224364"/>
-                <text x="24" y="190" fill="#38BDF8" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700">GATE 3</text>
-                <rect x="664" y="140" width="120" height="60" rx="5" fill="#0B2418" stroke="#22C55E"/>
-                <text x="724" y="174" fill="#86EFAC" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" text-anchor="middle">GEDUNG B</text>
+                <rect width="800" height="210" fill="var(--map-bg)"/>
+                <rect x="0" y="0" width="800" height="26" fill="var(--map-sea-top)" stroke="var(--map-yard-stroke)"/>
+                <text x="14" y="17" fill="var(--map-sea-fg)" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="700">LAUT JAWA // ALUR PELAYARAN</text>
+                <rect x="16" y="32" width="768" height="32" fill="var(--map-deck-bg)" stroke="var(--map-deck-stroke)"/>
+                <text x="24" y="52" fill="var(--map-deck-fg)" font-family="IBM Plex Mono, monospace" font-size="10">DERMAGA A</text>
+                <text x="680" y="52" fill="var(--map-deck-fg)" font-family="IBM Plex Mono, monospace" font-size="10">DERMAGA B</text>
+                <rect x="44" y="74" width="600" height="90" rx="4" fill="var(--map-yard-bg)" stroke="var(--map-yard-stroke)"/>
+                <text x="56" y="92" fill="var(--map-road-fg)" font-family="IBM Plex Mono, monospace" font-size="10">LAPANGAN PETIKEMAS C &amp; D</text>
+                <rect x="16" y="170" width="120" height="32" rx="4" fill="var(--map-yard-bg)" stroke="var(--map-deck-stroke)"/>
+                <text x="24" y="190" fill="var(--map-sea-fg)" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700">GATE 3</text>
+                <rect x="664" y="140" width="120" height="60" rx="5" fill="var(--map-safe-bg)" stroke="var(--sig-safe)"/>
+                <text x="724" y="174" fill="var(--map-safe-fg)" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" text-anchor="middle">GEDUNG B</text>
                 ${hotspots.map((h) => {
                   const hx = Math.round(h.x * 7.8);
                   const hy = Math.max(44, Math.min(184, Math.round(h.y * 2.02)));
                   const crit = h.count >= 10;
                   const r = crit ? 44 : 32;
                   const fillUrl = crit ? 'url(#heatCriticalGrad)' : 'url(#heatWarningGrad)';
-                  const dotCol = crit ? '#EF4444' : '#F59E0B';
+                  const dotCol = crit ? 'var(--sig-crit)' : 'var(--sig-warn)';
                   const shortName = h.zone.split('·')[0].trim();
                   return `
                     <g>
                       <circle cx="${hx}" cy="${hy}" r="${r}" fill="${fillUrl}"/>
-                      <circle cx="${hx}" cy="${hy}" r="6" fill="${dotCol}" stroke="#FFFFFF" stroke-width="1.5"/>
-                      <text x="${hx + 12}" y="${hy - 2}" fill="#FFFFFF" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="700">${h.count} LAPORAN</text>
-                      <text x="${hx + 12}" y="${hy + 10}" fill="${crit ? '#FCA5A5' : '#FDE68A'}" font-family="IBM Plex Mono, monospace" font-size="9.5" font-weight="700">${esc(shortName)}</text>
+                      <circle cx="${hx}" cy="${hy}" r="6" fill="${dotCol}" stroke="var(--map-pin-ring)" stroke-width="1.5"/>
+                      <text x="${hx + 12}" y="${hy - 2}" fill="var(--fg-primary)" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="700">${h.count} LAPORAN</text>
+                      <text x="${hx + 12}" y="${hy + 10}" fill="${crit ? 'var(--sig-crit)' : 'var(--sig-warn)'}" font-family="IBM Plex Mono, monospace" font-size="9.5" font-weight="700">${esc(shortName)}</text>
                     </g>
                   `;
                 }).join('')}

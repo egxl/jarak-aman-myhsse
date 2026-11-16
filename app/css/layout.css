@@ -70,7 +70,7 @@ button:disabled {
   min-height: 56px;
   padding: var(--sp-2) var(--sp-5);
   background: var(--bg-header);
-  color: #F1F6FC;
+  color: var(--fg-header);
   border-bottom: 1px solid var(--border-subtle);
   box-shadow: inset 0 -2px 0 var(--brand-gold), var(--shadow-sm);
   display: flex;
@@ -106,12 +106,12 @@ button:disabled {
 .shell-brand-title strong {
   font-size: 14px;
   letter-spacing: 0.02em;
-  color: #FFFFFF;
+  color: var(--fg-header);
 }
 
 .shell-brand-title span {
   font-size: 12px;
-  color: #A8C2DF;
+  color: var(--fg-header-sub);
 }
 
 .shell-phase-pill {
@@ -120,21 +120,21 @@ button:disabled {
   letter-spacing: 0.04em;
   padding: 4px 10px;
   border-radius: 999px;
-  background: rgba(34, 197, 94, 0.2);
-  color: #86EFAC;
-  border: 1px solid rgba(74, 222, 128, 0.35);
+  background: var(--sig-safe-bg);
+  color: var(--sig-safe-fg);
+  border: 1px solid var(--sig-safe);
 }
 
 .shell-phase-pill.is-evac {
-  background: rgba(220, 38, 38, 0.9);
+  background: var(--sig-crit-solid);
   color: #FFFFFF;
   border-color: #FCA5A5;
 }
 
 .shell-phase-pill.is-recovery {
-  background: rgba(234, 179, 8, 0.22);
-  color: #FEF08A;
-  border-color: rgba(250, 204, 21, 0.45);
+  background: var(--brand-gold-bg);
+  color: var(--brand-gold-fg);
+  border-color: var(--brand-gold);
 }
 
 .shell-nav {
@@ -142,16 +142,16 @@ button:disabled {
   flex-wrap: wrap;
   align-items: center;
   gap: var(--sp-1);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--header-ctrl-bg);
   padding: 3px;
   border-radius: var(--r-md);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
 }
 
 .shell-nav-btn {
   border: none;
   background: transparent;
-  color: #C7DAEE;
+  color: var(--header-nav-fg);
   font-size: 12.5px;
   font-weight: 600;
   padding: 6px 12px;
@@ -160,13 +160,13 @@ button:disabled {
 }
 
 .shell-nav-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #FFFFFF;
+  background: var(--header-ctrl-hover);
+  color: var(--fg-header);
 }
 
 .shell-nav-btn.active {
-  background: var(--brand-gold);
-  color: #071A33;
+  background: var(--header-nav-active-bg);
+  color: var(--header-nav-active-fg);
   font-weight: 700;
 }
 
@@ -180,21 +180,21 @@ button:disabled {
   height: 32px;
   padding: 0 12px;
   border-radius: var(--r-sm);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.08);
-  color: #E2EEF9;
+  border: 1px solid var(--header-ctrl-border);
+  background: var(--header-ctrl-bg);
+  color: var(--fg-header);
   font-size: 12px;
   font-weight: 600;
 }
 
 .shell-tool-btn:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: var(--header-ctrl-hover);
 }
 
 .shell-tool-btn.active {
-  background: rgba(250, 204, 21, 0.22);
+  background: var(--brand-gold-bg);
   border-color: var(--brand-gold);
-  color: #FEF08A;
+  color: var(--brand-gold-fg);
 }
 
 /* =========================================================
@@ -321,8 +321,8 @@ button:disabled {
   max-width: 380px;
   padding: var(--sp-3) var(--sp-4);
   border-radius: var(--r-md);
-  background: var(--bg-header);
-  color: #FFFFFF;
+  background: var(--bg-surface);
+  color: var(--fg-primary);
   border: 1px solid var(--brand-gold);
   box-shadow: var(--shadow-lg);
   font-size: 13px;
