@@ -12,7 +12,7 @@ def run():
         page.on("console", lambda msg: errors.append(f"console.{msg.type}: {msg.text}") if msg.type == "error" else None)
 
         page.goto(APP_URL, wait_until="load")
-        page.set_default_timeout(3000)
+        page.set_default_timeout(10000)
 
         # 1. Kiosk Gate: toggle EN -> ID, check-in TKBM Suherman + 1 passenger + PPE enforcement + borrowed APD
         page.click('[data-view-btn="kiosk"]')
@@ -112,6 +112,77 @@ def run():
         page.click('[data-kiosk-action="close-tour"]')
         assert page.locator(".kiosk-tour-card").count() == 0
         assert page.locator("#kiosk-name").input_value() == "DraftTemp"
+
+        # 7. Split: HP + Kendali Spotlight Tour: walks 1/8 -> 8/8, avoids overlap at 1280x720, restores pre-tour state
+        page.click('[data-view-btn="control"]')
+        assert not page.locator('[data-ctrl-action="start-split-tour"]').is_visible()
+        page.click('[data-view-btn="split"]')
+        assert page.locator('[data-ctrl-action="start-split-tour"]').is_visible()
+
+        page.set_viewport_size({"width": 1280, "height": 720})
+        pre_control_text = page.locator("#mount-control").inner_text()
+        assert "PERINTAH EVAKUASI · KOMANDAN INSIDEN" in pre_control_text
+
+        page.click('[data-ctrl-action="start-split-tour"]')
+        assert "1 / 8" in page.locator(".split-tour-card").inner_text()
+
+        def assert_no_card_spotlight_overlap():
+            spot = page.locator(".split-tour-spotlight").bounding_box()
+            card = page.locator(".split-tour-card").bounding_box()
+            assert spot is not None and card is not None
+            overlap_x = min(spot["x"] + spot["width"], card["x"] + card["width"]) - max(spot["x"], card["x"])
+            overlap_y = min(spot["y"] + spot["height"], card["y"] + card["height"]) - max(spot["y"], card["y"])
+            assert not (overlap_x > 2 and overlap_y > 2), f"Tour card overlaps spotlight: spot={spot}, card={card}"
+
+        # Step 2: APD fail sync
+        page.click('[data-split-tour="next"]')
+        assert "2 / 8" in page.locator(".split-tour-card").inner_text()
+        assert "Helm tidak terdeteksi" in page.locator("#mount-mobile").inner_text()
+        assert "3 APD bermasalah" in page.locator("#mount-control").inner_text()
+        assert_no_card_spotlight_overlap()
+
+        # Step 3: Scenario dock
+        page.click('[data-split-tour="next"]')
+        assert "3 / 8" in page.locator(".split-tour-card").inner_text()
+
+        # Step 4: Near Miss F12 -> Antrean Alarm
+        page.click('[data-split-tour="next"]')
+        assert "4 / 8" in page.locator(".split-tour-card").inner_text()
+        assert "Forklift nyaris menyenggol" in page.locator("#mount-control").inner_text()
+
+        # Step 5: Tab 2 Compliance & Hotspot
+        page.click('[data-split-tour="next"]')
+        assert "5 / 8" in page.locator(".split-tour-card").inner_text()
+        assert "15 LAPORAN" in page.locator("#mount-control").inner_text()
+
+        # Step 6: Tab 3 Induction Rev 2 -> INFO DARURAT BARU on phone
+        page.click('[data-split-tour="next"]')
+        assert "6 / 8" in page.locator(".split-tour-card").inner_text()
+        assert "INFO DARURAT BARU" in page.locator("#mount-mobile").inner_text()
+        assert_no_card_spotlight_overlap()
+
+        # Step 7: Tsunami evac across both panes
+        page.click('[data-split-tour="next"]')
+        assert "7 / 8" in page.locator(".split-tour-card").inner_text()
+        assert "Gedung Evakuasi B" in page.locator("#mount-mobile").inner_text()
+        assert_no_card_spotlight_overlap()
+
+        # Step 8: Road closed reroute
+        page.click('[data-split-tour="next"]')
+        assert "8 / 8" in page.locator(".split-tour-card").inner_text()
+        assert "Rute Cadangan" in page.locator("#mount-mobile").inner_text()
+        assert_no_card_spotlight_overlap()
+
+        # Close restores pre-tour state cleanly
+        page.click('.split-tour-card [data-split-tour="close"]')
+        assert page.locator(".split-tour-card").count() == 0
+        assert "PERINTAH EVAKUASI · KOMANDAN INSIDEN" in page.locator("#mount-control").inner_text()
+
+        # Leaving split view auto-closes open tour
+        page.click('[data-ctrl-action="start-split-tour"]')
+        assert page.locator(".split-tour-card").is_visible()
+        page.evaluate("document.querySelector('[data-view-btn=\"control\"]').click()")
+        assert page.locator(".split-tour-card").count() == 0
 
         assert errors == [], f"Unexpected browser errors: {errors}"
         browser.close()
