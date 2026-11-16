@@ -98,6 +98,21 @@ def run():
         assert "Oki" in marshal_pending
         assert "Joko" not in marshal_pending
 
+        # 6. Kiosk Gate Spotlight Tour: walks 1/6 -> 6/6, preserves worker count, restores draft on close
+        page.click('[data-view-btn="kiosk"]')
+        page.click('[data-kiosk-action="reset-flow"]')
+        page.fill('#kiosk-name', 'DraftTemp')
+        page.click('[data-kiosk-action="start-tour"]')
+        assert "1 / 6" in page.locator(".kiosk-tour-card").inner_text()
+        page.click('[data-kiosk-action="tour-next"]')
+        assert page.locator("#kiosk-name").input_value() == "Slamet"
+        for _ in range(4):
+            page.click('[data-kiosk-action="tour-next"]')
+        assert "6 / 6" in page.locator(".kiosk-tour-card").inner_text()
+        page.click('[data-kiosk-action="close-tour"]')
+        assert page.locator(".kiosk-tour-card").count() == 0
+        assert page.locator("#kiosk-name").input_value() == "DraftTemp"
+
         assert errors == [], f"Unexpected browser errors: {errors}"
         browser.close()
         print("e2e_closed_loop.py: PASS")
