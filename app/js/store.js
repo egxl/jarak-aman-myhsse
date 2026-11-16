@@ -116,26 +116,33 @@
   function countSafeAtPoint(state, pointId) {
     if (state.phase !== 'evac') return 0;
     const elapsed = state.evacTotal - state.evacLeft;
-    let count = 0;
+    let gedungCount = 0;
+    let timurCount = 0;
+    const addPoint = (pid) => {
+      if (pid === 'gedung-b') gedungCount++;
+      else if (pid === 'area-timur') timurCount++;
+    };
     for (const w of state.workers) {
       if (!isWorkerInEvacZone(w, state)) continue;
       const ov = state.marshal.overrides[w.id];
       if (ov) {
-        if (ov.status === 'Aman' && ov.pointId === pointId) count++;
+        if (ov.status === 'Aman') addPoint(ov.pointId);
         continue;
       }
       if (w.id === 'Andi' && state.mobile.screen === 'safe') {
         const dest = state.evacHazard === 'gempa' ? 'area-timur' : 'gedung-b';
-        if (dest === pointId) count++;
+        addPoint(dest);
         continue;
       }
       if (w.baseSos || w.locPerm !== 'always' || !w.hasApp || w.heartbeatLost) continue;
       if (elapsed >= w.arrive) {
-        const autoPoint = state.evacHazard === 'gempa' ? 'area-timur' : (count >= D.ASSEMBLY_POINTS['gedung-b'].cap ? 'area-timur' : 'gedung-b');
-        if (autoPoint === pointId) count++;
+        const autoPoint = (state.evacHazard === 'gempa' || gedungCount >= D.ASSEMBLY_POINTS['gedung-b'].cap)
+          ? 'area-timur'
+          : 'gedung-b';
+        addPoint(autoPoint);
       }
     }
-    return count;
+    return pointId === 'gedung-b' ? gedungCount : timurCount;
   }
 
   function getActiveRoute(state) {
@@ -625,6 +632,8 @@
           andi.indTime = '07.15';
         }
         delete s.marshal.overrides.Andi;
+        s.timedOut = false;
+        s.routeClosed = false;
         s.mobile.activeScenario = key;
         s.mobile.wrong = false;
         s.mobile.islandOpen = false;
@@ -860,4 +869,5 @@
   NS.getComplianceStats = getComplianceStats;
   NS.getHotspots = getHotspots;
   NS.isWorkerInEvacZone = isWorkerInEvacZone;
+  NS.countSafeAtPoint = countSafeAtPoint;
 })(typeof window !== 'undefined' ? window : globalThis);

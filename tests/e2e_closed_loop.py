@@ -80,6 +80,20 @@ def run():
         assert "Suherman" not in sar_text
         page.click('[data-modal-close]')
 
+        # 5. Zone-scoped Dermaga evacuation excludes Lapangan C workers from Marshal "Perlu Konfirmasi"
+        page.click('[data-view-btn="control"]')
+        page.click('[data-ctrl-action="end-evac"]')
+        page.click('[data-ctrl-action="reopen-zones"]')
+        page.click('[data-ctrl-action="open-confirm"]')
+        page.click('[data-draft-hazard="tsunami"]')
+        page.click('[data-draft-zone="dermaga"]')
+        page.click('[data-ctrl-action="send-evac"]')
+        page.click('[data-view-btn="marshal"]')
+        page.click('[data-marshal-filter="pending"]')
+        marshal_pending = page.locator("#mount-marshal").inner_text()
+        assert "Oki" in marshal_pending
+        assert "Joko" not in marshal_pending
+
         assert errors == [], f"Unexpected browser errors: {errors}"
         browser.close()
         print("e2e_closed_loop.py: PASS")

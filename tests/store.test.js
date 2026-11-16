@@ -93,3 +93,30 @@ test('closed road switches tsunami route to backup route and BroadcastChannel er
   assert.ok(getComplianceStats(store.getState()).groups.length >= 4);
   delete global.BroadcastChannel;
 });
+
+test('countSafeAtPoint tracks gedung-b capacity separately when counting area-timur overflow', () => {
+  const store = new Store();
+  // Add 25 GPS-tracked workers who auto-arrive at t=30s
+  for (let i = 0; i < 25; i++) {
+    store.getState().workers.push({
+      id: `gps-${i}`, name: `GPS-${i}`, role: 'TKBM', group: 'TKBM', zone: 'Lapangan C',
+      x: 30, y: 50, locPerm: 'always', hasApp: true, heartbeatLost: false, indStatus: 'done', indTime: '07.15', arrive: 30
+    });
+  }
+  store.dispatch({ type: 'START_EVAC', hazard: 'tsunami', zone: 'all', basis: 'bmkg', drill: false });
+  store.dispatch({ type: 'TOGGLE_FAST', fast: true });
+  for (let t = 0; t < 35; t++) store.tick();
+  const s = store.getState();
+  assert.equal(global.window.JARAK_AMAN.countSafeAtPoint(s, 'gedung-b'), 40);
+  assert.ok(global.window.JARAK_AMAN.countSafeAtPoint(s, 'area-timur') > 0);
+});
+
+test('JUMP_SCENARIO clears stale timedOut flag from expired evacuation', () => {
+  const store = new Store();
+  store.dispatch({ type: 'START_EVAC', hazard: 'tsunami', zone: 'all', basis: 'bmkg', drill: false });
+  store.dispatch({ type: 'TOGGLE_FAST', fast: true });
+  for (let t = 0; t < 35; t++) store.tick();
+  assert.equal(store.getState().timedOut, true);
+  store.dispatch({ type: 'JUMP_SCENARIO', key: 'enter' });
+  assert.equal(store.getState().timedOut, false);
+});

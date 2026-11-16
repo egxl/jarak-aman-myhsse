@@ -39,7 +39,7 @@
 
     const filtered = displayRows.filter((r) => {
       const effectiveSafe = r.queuedStatus === 'Aman' || r.status === 'Aman';
-      if (m.filter === 'pending') return !effectiveSafe;
+      if (m.filter === 'pending') return !effectiveSafe && (!evac || r.inEvacZone);
       if (m.filter === 'safe') return effectiveSafe;
       return true;
     });
