@@ -312,7 +312,7 @@
               : (notSafe.length === 0
                 ? `<div style="font-size:12.5px;font-weight:700;color:var(--sig-safe)">Seluruh pekerja di zona evakuasi telah tercatat Aman.</div>`
                 : `<div style="display:flex;flex-direction:column;gap:5px">
-                    ${notSafe.slice(0, 8).map((r) => `
+                    ${notSafe.map((r) => `
                       <div style="display:flex;justify-content:space-between;padding:6px 8px;border-radius:8px;background:var(--bg-surface-2);font-size:12px">
                         <span><strong>${esc(r.name)}</strong> · ${esc(r.zone)}</span>
                         <span style="color:${toneColor(r.tone)};font-weight:700">${esc(r.status)}</span>
