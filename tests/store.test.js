@@ -134,3 +134,21 @@ test('JUMP_SCENARIO apdfail starts in failed helmet state and only marks Andi do
   store.dispatch({ type: 'SET_MOBILE_STATE', patch: { screen: 'indDone', indDone: true } });
   assert.equal(store.getState().workers.find((w) => w.id === 'Andi').indStatus, 'done');
 });
+
+test('restoreState reverts pre-tour snapshot and null resets to clean initial state', () => {
+  const store = new Store();
+  const snap = JSON.parse(JSON.stringify(store.getState()));
+  store.dispatch({ type: 'KIOSK_CHECKIN', name: 'TourTemp', role: 'TKBM', cardId: 'T-1', passengers: 0, borrowedApd: false });
+  store.dispatch({ type: 'START_EVAC', hazard: 'tsunami', zone: 'all', basis: 'bmkg', drill: false });
+  assert.equal(store.getState().phase, 'evac');
+  assert.equal(store.getState().workers.some((w) => w.name === 'TourTemp'), true);
+
+  store.restoreState(snap, false);
+  assert.equal(store.getState().phase, 'normal');
+  assert.equal(store.getState().workers.some((w) => w.name === 'TourTemp'), false);
+
+  store.dispatch({ type: 'SUBMIT_REPORT', category: 'nm', hasPhoto: false, anonymous: true, note: 'Temp' });
+  assert.equal(store.getState().liveAlarms.length, 1);
+  store.restoreState(null, false);
+  assert.equal(store.getState().liveAlarms.length, 0);
+});

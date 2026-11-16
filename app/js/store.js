@@ -425,6 +425,11 @@
     this._notify(true);
   };
 
+  Store.prototype.restoreState = function (snapshot, broadcast) {
+    this.state = snapshot ? deepClone(snapshot) : createInitialState();
+    this._notify(!!broadcast);
+  };
+
   Store.prototype.tick = function () {
     const s = this.state;
     let changed = false;
