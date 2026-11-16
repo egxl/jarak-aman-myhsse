@@ -100,16 +100,23 @@
 }
 
 @media (max-width: 560px) {
+  .phone-meta-strip {
+    padding: 8px 12px 4px;
+  }
   .phone-frame {
     width: 100vw;
-    height: calc(100vh - 96px);
-    min-height: 640px;
+    height: auto;
+    min-height: 620px;
     border-width: 0;
     border-radius: 0;
+    overflow: visible;
+  }
+  .phone-scroll {
+    overflow-y: visible;
   }
   .mobile-stage {
     flex-direction: column;
-    padding: 8px 0;
+    padding: 4px 0 24px;
     gap: 12px;
   }
 }
