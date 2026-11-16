@@ -52,8 +52,7 @@
       <div class="marshal-shell">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--border-subtle);padding-bottom:14px">
           <div>
-            <span style="font-size:11px;font-weight:800;letter-spacing:0.06em;color:var(--brand-gold)">TABLET PETUGAS TITIK KUMPUL (FR-3.3)</span>
-            <h1 style="margin:4px 0 4px;font-size:22px">Pencocokan Headcount &amp; Roll-Call Evakuasi</h1>
+            <h1 style="margin:0 0 4px;font-size:22px">Pencocokan Headcount &amp; Roll-Call Titik Kumpul (FR-3.3)</h1>
             <div style="font-size:12.5px;color:var(--fg-muted)">Catatan petugas titik kumpul menjadi sumber kebenaran jika berbeda dengan deteksi geofence otomatis.</div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -73,7 +72,7 @@
               <button data-marshal-point="${pid}" style="text-align:left;padding:12px 14px;border-radius:12px;border:2px solid ${active ? 'var(--brand-gold)' : 'var(--border-subtle)'};background:${active ? 'var(--brand-gold-bg)' : 'var(--bg-surface-2)'};color:var(--fg-primary);display:flex;justify-content:space-between;align-items:center">
                 <div>
                   <strong style="font-size:14px">${esc(pt.name)}</strong>
-                  <div style="font-size:11.5px;color:var(--fg-muted)">${esc(pt.typeLabel)}${isPrimaryDest && evac ? ' · Tujuan Aktif' : ''}</div>
+                  <div style="font-size:12px;color:var(--fg-muted)">${esc(pt.typeLabel)}${isPrimaryDest && evac ? ' · Tujuan Aktif' : ''}</div>
                 </div>
                 <span class="mono" style="font-size:18px;font-weight:800">${cnt}/${pt.cap}</span>
               </button>
@@ -102,14 +101,14 @@
                 <input type="checkbox" data-marshal-bulk="${esc(r.name)}" data-worker-id="${esc(r.id)}" ${checked ? 'checked' : ''} style="width:18px;height:18px;cursor:pointer">
                 <div>
                   <strong>${esc(r.name)}</strong> ${!r.hasApp ? '<span class="badge badge-muted">Tanpa HP</span>' : ''}
-                  <div style="font-size:11.5px;color:var(--fg-muted)">${esc(r.role)} · ${esc(r.zone)}</div>
+                  <div style="font-size:12px;color:var(--fg-muted)">${esc(r.role)} · ${esc(r.zone)}</div>
                 </div>
                 <div style="font-size:12px;color:var(--fg-secondary)">${esc(r.posDesc)}</div>
                 <div style="font-weight:700;color:${toneColor(statusTone)}">${esc(statusLbl)}</div>
                 <div style="display:flex;gap:5px">
-                  <button data-marshal-safe="${esc(r.id)}" class="btn-safe" style="padding:5px 10px;font-size:11.5px">Aman</button>
-                  <button data-marshal-override="${esc(r.id)}" class="btn-ghost" style="padding:5px 9px;font-size:11.5px">Override</button>
-                  <button data-marshal-sos="${esc(r.id)}" class="btn-danger" style="padding:5px 9px;font-size:11.5px">SOS</button>
+                  <button data-marshal-safe="${esc(r.id)}" class="btn-safe" style="padding:5px 10px;font-size:12px">Aman</button>
+                  <button data-marshal-override="${esc(r.id)}" class="btn-ghost" style="padding:5px 9px;font-size:12px">Override</button>
+                  <button data-marshal-sos="${esc(r.id)}" class="btn-danger" style="padding:5px 9px;font-size:12px">SOS</button>
                 </div>
               </div>
             `;

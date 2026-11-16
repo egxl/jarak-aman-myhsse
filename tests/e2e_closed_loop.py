@@ -14,18 +14,22 @@ def run():
 
         page.goto(APP_URL, wait_until="load")
 
-        # 1. Kiosk Gate: toggle EN -> ID, check-in TKBM Suherman + 1 passenger + borrowed APD
+        # 1. Kiosk Gate: toggle EN -> ID, check-in TKBM Suherman + 1 passenger + PPE enforcement + borrowed APD
         page.click('[data-view-btn="kiosk"]')
         page.click('[data-kiosk-lang="en"]')
-        assert "No-Smartphone Gate Induction" in page.locator("#mount-kiosk").inner_text()
+        assert "Gate Check-In & Safety Induction" in page.locator("#mount-kiosk").inner_text()
         page.click('[data-kiosk-lang="id"]')
 
         page.fill('#kiosk-name', 'Suherman')
         page.fill('#kiosk-card', 'TKBM-881')
-        page.select_option('#kiosk-passengers', '1')
+        page.click('[data-kiosk-action="pass-inc"]')
         page.click('[data-kiosk-action="next-step"]') # -> step 2
         page.click('[data-kiosk-action="next-step"]') # -> step 3
+        # Uncheck Helm -> submit must be disabled until Pinjam APD is toggled
+        page.click('[data-kiosk-apd="apdHelm"]')
+        assert page.locator('[data-kiosk-action="submit-checkin"]').is_disabled()
         page.click('[data-kiosk-action="toggle-borrow"]')
+        assert page.locator('[data-kiosk-action="submit-checkin"]').is_enabled()
         page.click('[data-kiosk-action="submit-checkin"]') # -> step 4
         assert "Suherman" in page.locator("#mount-kiosk").inner_text()
 

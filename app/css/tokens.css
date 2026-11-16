@@ -1,18 +1,26 @@
 :root,
 [data-theme="dark"] {
-  --bg-app: #061325;
-  --bg-header: #081A33;
-  --bg-surface: #0B213E;
-  --bg-surface-2: #102B4E;
-  --bg-surface-3: #163761;
-  --bg-phone-stage: #091B34;
+  /* Precision Maritime Command — Dark Slate Palette */
+  --bg-app: #06101E;
+  --bg-ambient: #06101E;
+  --bg-header: #081526;
+  --bg-surface: #0B1B30;
+  --bg-surface-2: #0F233D;
+  --bg-surface-3: #152D4D;
+  --bg-phone-stage: #071424;
 
-  --border-subtle: rgba(148, 184, 224, 0.16);
-  --border-strong: rgba(148, 184, 224, 0.30);
+  --glass-bg: #0B1B30;
+  --glass-bg-heavy: #081526;
+  --glass-border: rgba(148, 184, 224, 0.16);
+  --glass-specular: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --glass-blur: none;
+
+  --border-subtle: rgba(148, 184, 224, 0.14);
+  --border-strong: rgba(148, 184, 224, 0.28);
 
   --fg-primary: #F1F6FC;
-  --fg-secondary: #B9CBE0;
-  --fg-muted: #7F99B8;
+  --fg-secondary: #C2D3E6;
+  --fg-muted: #8CA6C4;
 
   /* Pelindo Brand Blue & Gold */
   --brand-navy: #0A2E5C;
@@ -39,36 +47,56 @@
   --sig-muted: #94A3B8;
   --sig-muted-bg: rgba(148, 163, 184, 0.14);
 
-  /* Mobile Phone Internal Daylight-Readable Tokens (adapts softly in dark mode too) */
-  --phone-bg: #0D2038;
-  --phone-card: #122947;
-  --phone-card-alt: #173357;
+  /* Mobile Phone Internal Tokens */
+  --phone-bg: #0A192C;
+  --phone-card: #0F233C;
+  --phone-card-alt: #132B49;
   --phone-fg: #F1F6FC;
-  --phone-muted: #A9BED6;
-  --phone-border: rgba(148, 184, 224, 0.22);
+  --phone-muted: #AFC3DA;
+  --phone-border: rgba(148, 184, 224, 0.18);
   --phone-accent: #38BDF8;
   --phone-cta: #1D75D8;
 
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.28);
-  --shadow-lg: 0 18px 42px rgba(2, 8, 20, 0.55);
-  --font-sans: 'Plus Jakarta Sans', 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* 4px / 8px Spacing Scale & Radius Tokens */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 18px;
+  --r-phone: 44px;
+
+  --shadow-sm: 0 2px 6px rgba(2, 8, 18, 0.35);
+  --shadow-lg: 0 20px 44px rgba(2, 8, 18, 0.65);
+  --font-sans: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
 }
 
 [data-theme="light"] {
-  --bg-app: #EEF3F9;
+  --bg-app: #F1F5F9;
+  --bg-ambient: #F1F5F9;
   --bg-header: #0A2E5C;
   --bg-surface: #FFFFFF;
-  --bg-surface-2: #F5F8FC;
-  --bg-surface-3: #E6EEF8;
-  --bg-phone-stage: #E3ECF6;
+  --bg-surface-2: #F8FAFC;
+  --bg-surface-3: #EEF2F7;
+  --bg-phone-stage: #E2E8F0;
 
-  --border-subtle: #D5E0EC;
-  --border-strong: #B0C3D8;
+  --glass-bg: #FFFFFF;
+  --glass-bg-heavy: #FFFFFF;
+  --glass-border: #CBD5E1;
+  --glass-specular: none;
+  --glass-blur: none;
 
-  --fg-primary: #0B213D;
-  --fg-secondary: #334E6E;
-  --fg-muted: #5F7794;
+  --border-subtle: #CBD5E1;
+  --border-strong: #94A3B8;
+
+  --fg-primary: #0F172A;
+  --fg-secondary: #334155;
+  --fg-muted: #475569;
 
   /* Pelindo Brand Blue & Gold */
   --brand-navy: #0A2E5C;
@@ -99,12 +127,12 @@
   --phone-bg: #FFFFFF;
   --phone-card: #FFFFFF;
   --phone-card-alt: #F4F7FB;
-  --phone-fg: #0B213D;
-  --phone-muted: #4B6482;
-  --phone-border: #D4DFEC;
+  --phone-fg: #0F172A;
+  --phone-muted: #475569;
+  --phone-border: #CBD5E1;
   --phone-accent: #00579B;
   --phone-cta: #0A2E5C;
 
-  --shadow-sm: 0 2px 10px rgba(10, 46, 92, 0.08);
-  --shadow-lg: 0 20px 48px rgba(10, 46, 92, 0.16);
+  --shadow-sm: 0 1px 4px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 18px 40px rgba(15, 23, 42, 0.16);
 }
