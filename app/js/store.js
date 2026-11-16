@@ -615,10 +615,9 @@
         if (action.patch && action.patch.indDone === true) {
           const andi = s.workers.find((w) => w.id === 'Andi');
           if (andi) { andi.indStatus = 'done'; andi.indTime = '07.15'; }
-        }
-        if (action.patch && action.patch.indFailMode === false && action.patch.indShot === 'ok') {
+        } else if (action.patch && action.patch.indFailMode === false && action.patch.indShot === 'ok') {
           const andi = s.workers.find((w) => w.id === 'Andi');
-          if (andi) { andi.indStatus = 'done'; }
+          if (andi && andi.indStatus !== 'done') { andi.indStatus = 'pending'; }
         }
         break;
       case 'JUMP_SCENARIO': {
@@ -666,7 +665,7 @@
           s.mobile.screen = 'ind';
           s.mobile.indDone = false;
           s.mobile.indStep = 1;
-          s.mobile.indShot = 'none';
+          s.mobile.indShot = fail ? 'fail' : 'none';
           s.mobile.indFailMode = fail;
           s.mobile.shoes = false;
           s.mobile.gloves = false;
@@ -681,6 +680,15 @@
           s.timedOut = false;
           s.marshal.selectedPoint = 'area-timur';
           s.mobile.screen = 'alert';
+          if (!s.liveAlarms.some((a) => a.id === 'live-shake-demo')) {
+            s.liveAlarms.unshift({
+              id: 'live-shake-demo',
+              sev: 'LAPORAN GUNCANGAN KUAT (MOBILE)',
+              tone: 'warn',
+              title: 'Andi (Checker · Dermaga A) merasakan guncangan kuat',
+              meta: 'Baru saja · Evakuasi mandiri dimulai di HP pekerja; menunggu keputusan komandan'
+            });
+          }
         } else if (key === 'bmkg' || key === 'island') {
           s.phase = 'evac';
           s.evacSource = 'cmd';
@@ -692,6 +700,11 @@
           s.mobile.screen = 'alert';
           s.mobile.evacView = key === 'island' ? 'other' : 'app';
         } else if (key === 'arrive') {
+          if (s.phase !== 'evac') {
+            s.evacSource = 'cmd';
+            s.evacHazard = 'tsunami';
+            s.evacZone = 'all';
+          }
           s.phase = 'evac';
           s.evacLeft = Math.max(60, s.evacTotal - 180);
           s.timedOut = false;
@@ -800,6 +813,9 @@
         s.kiosk.passengers = 0;
         s.kiosk.phone = '';
         s.kiosk.understood = false;
+        s.kiosk.apdHelm = true;
+        s.kiosk.apdVest = true;
+        s.kiosk.apdShoes = true;
         s.kiosk.borrowedApd = false;
         break;
       case 'MARSHAL_SET_POINT':

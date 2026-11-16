@@ -120,3 +120,17 @@ test('JUMP_SCENARIO clears stale timedOut flag from expired evacuation', () => {
   store.dispatch({ type: 'JUMP_SCENARIO', key: 'enter' });
   assert.equal(store.getState().timedOut, false);
 });
+
+test('JUMP_SCENARIO apdfail starts in failed helmet state and only marks Andi done after indDone', () => {
+  const store = new Store();
+  store.dispatch({ type: 'JUMP_SCENARIO', key: 'apdfail' });
+  assert.equal(store.getState().mobile.indShot, 'fail');
+  assert.equal(store.getState().mobile.indFailMode, true);
+  assert.equal(store.getState().workers.find((w) => w.id === 'Andi').indStatus, 'apd_helm');
+
+  store.dispatch({ type: 'SET_MOBILE_STATE', patch: { indShot: 'ok', indFailMode: false } });
+  assert.equal(store.getState().workers.find((w) => w.id === 'Andi').indStatus, 'pending');
+
+  store.dispatch({ type: 'SET_MOBILE_STATE', patch: { screen: 'indDone', indDone: true } });
+  assert.equal(store.getState().workers.find((w) => w.id === 'Andi').indStatus, 'done');
+});
